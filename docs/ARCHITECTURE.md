@@ -93,7 +93,8 @@ src/
 │   ├── about/
 │   │   ├── components/
 │   │   ├── data/
-│   │   └── types/
+│   │   ├── types/
+│   │   └── animations/
 │   ├── experience/
 │   │   ├── components/
 │   │   ├── data/
@@ -116,7 +117,8 @@ src/
 │   └── three/
 │
 ├── pages/
-│   └── index.astro
+│   ├── index.astro
+│   └── about.astro
 │
 ├── styles/
 │   ├── reset.css
@@ -272,6 +274,43 @@ Use JavaScript only for:
 - explicitly interactive UI.
 
 Do not create client-side state for content that can be generated at build time.
+
+### Client navigation
+
+The shared layout mounts Astro's native `ClientRouter` to provide progressive
+same-origin transitions between the landing page and feature pages such as
+`/about`. Page-specific browser modules must initialize on `astro:page-load` and
+clean up on `astro:before-swap` so WebGL renderers, observers, timers, and GSAP
+contexts do not survive a route change.
+
+Do not add a separate routing or page-transition dependency while Astro's native
+router satisfies the requirement.
+
+### Interactive terminal
+
+The shared shell owns the Home/About terminal through `GlobalTerminal.astro` and
+its colocated typed client module. The command registry runs entirely in the
+browser, renders output as text, and may navigate only to routes that exist.
+
+Terminal entries, command recall, and open state persist in `sessionStorage` for
+the current tab. Initialization follows the shared `astro:page-load` and
+`astro:before-swap` lifecycle, and every listener or observer must be removed by
+the returned cleanup function. Company capability content lives in the shared
+data layer so the About presentation and terminal output use one source of truth.
+
+The landing page composes `Hero` and `AboutPage` in the same document so the
+primary experience can be traversed with native vertical scrolling. Persistent
+shell UI (`SiteHeader`, `GlobalTerminal`, and `GlobalScrollControl`) belongs to `BaseLayout`, outside
+feature sections. Section components must not duplicate those global elements.
+
+`src/features/home/animations/landing-scroll.gsap.ts` owns only the coordinated
+Home-to-About scroll sequence and active navigation state. Feature-specific load
+animations and WebGL lifecycle remain owned by their respective features.
+
+The landing route mounts one shared `InteractiveGlobe` outside both section
+components. `Hero` and the embedded `AboutPage` must not create additional WebGL
+scenes. The standalone `/about` route may mount its own globe because it runs in
+a separate document context.
 
 ### Prefer `.astro`
 

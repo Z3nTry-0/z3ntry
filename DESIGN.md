@@ -471,6 +471,7 @@ Esta sección traduce el sistema visual documentado a patrones digitales. Son de
 ### 8.1 Header / navegación
 
 - Oscuro, compacto y visualmente ligero.
+- Permanece fijo y en la misma posición durante el recorrido vertical entre Home y About.
 - Priorizar espacio sobre un gran contenedor.
 - Separar del contenido con hairline solo cuando sea necesario.
 - Mantener el logo sobre una superficie limpia y oscura.
@@ -515,7 +516,30 @@ Esta sección traduce el sistema visual documentado a patrones digitales. Son de
 
 En el Hero se evita la selección accidental de contenido, la copia desde la interfaz y el arrastre nativo del isologo. Esta protección conserva la presentación durante la interacción, pero no debe considerarse una medida de seguridad ni sustituir la accesibilidad semántica.
 
-### 8.3 Encabezado de sección
+### 8.3 Página About
+
+La página About extiende el Hero como una interfaz técnica de sistema, no como una landing page independiente con otro lenguaje visual.
+
+- La composición desktop combina una zona editorial izquierda de aproximadamente 50–55% y un globo sobredimensionado a la derecha, sin divisor físico entre ambas.
+- El headline `WE SECURE. / WE ENGINEER. / WE POSITION.` domina la jerarquía. Los puntos finales utilizan Signal Red.
+- El contenido describe únicamente las capacidades oficiales: Cybersecurity, Development y Design.
+- Las capacidades se representan como una topología vertical de nodos pequeños, anillos finos y líneas de conexión; no como cards.
+- Cada nodo revela una descripción breve al recibir hover o foco de teclado; el cambio amplía la información sin convertir el elemento en una card.
+- El rail narrativo `MINDSET / BUILD / PROTECT / CREATE / SCALE` ocupa la posición técnica superior izquierda. No se muestra el identificador redundante `02:[ABOUT] / COMPANY PROFILE`.
+- El mensaje `ALWAYS ONE / STEP AHEAD.` se superpone al planeta, con la segunda línea en Signal Red y un área circular negra difuminada que preserva su lectura sobre las líneas geográficas.
+- El párrafo corporativo debe tener mayor tamaño y contraste que la metadata, manteniendo un ancho de lectura controlado y tipografía monoespaciada.
+- Metadata, coordenadas, grid parcial y terminal se mantienen secundarios y con contraste bajo.
+- El globo usa costas en gris apagado, graticules finas, pocas rutas y fondo transparente; no emplea texturas realistas ni fronteras políticas.
+- En móvil, el orden se vuelve vertical: metadata, headline, descripción, globo, capacidades y mindset. Se permite el recorte lateral del planeta, pero nunca scroll horizontal.
+- La terminal se integra directamente en el canvas oscuro, sin ventana, panel o borde exterior.
+- En la portada, About continúa debajo del Hero como parte del mismo documento; no requiere un cambio de ruta para descubrirse mediante scroll.
+- El header, la terminal y el indicador `Scroll down` del Hero se mantienen como una capa global estable sobre todas las secciones y conservan exactamente su posición.
+- La transición desde el Hero preserva la jerarquía: primero salen los elementos editoriales, luego el globo se aproxima y finalmente emerge el mensaje `ALWAYS ONE STEP AHEAD`.
+- Home y About comparten un único globo durante el recorrido de la portada. El contenido de ambas secciones debe solaparse mediante crossfade para evitar cortes perceptibles.
+- El área circular del mensaje debe ser amplia y predominantemente negra, con un borde difuso extendido que se funda con Void Black.
+- El área circular se alinea con el centro visual del globo y aparece gradualmente antes que el texto del mensaje.
+
+### 8.4 Encabezado de sección
 
 Anatomía recomendada:
 
@@ -531,7 +555,7 @@ OFFENSIVE SECURITY
 - Línea roja breve cuando aporte jerarquía.
 - Espacio generoso antes del contenido.
 
-### 8.4 Bloques de contenido
+### 8.5 Bloques de contenido
 
 Preferir:
 
@@ -548,7 +572,7 @@ Evitar como patrón por defecto:
 [ card redondeada + sombra + icono + gradiente ]
 ```
 
-### 8.5 Botones / CTA
+### 8.6 Botones / CTA
 
 El manual no define un estilo de botón específico. Deben conservar el carácter general:
 
@@ -559,9 +583,17 @@ El manual no define un estilo de botón específico. Deben conservar el carácte
 - Sin glow, bisel ni degradado decorativo.
 - Evitar pills excesivas salvo necesidad funcional.
 
-### 8.6 Terminal / consola
+### 8.7 Terminal / consola
 
 Una interfaz inspirada en terminal es compatible con el sistema de microcopy técnico siempre que sea funcional y contenida.
+
+La terminal global de Home y About comienza como un prompt discreto en la esquina inferior izquierda. Al activarlo, el panel crece hacia arriba sin desplazar el contenido de la página. El panel conserva dimensiones fijas, el campo de entrada permanece anclado abajo y el historial se desplaza dentro de una región transparente hacia la parte superior.
+
+- El panel usa fondo Void Black casi opaco y un único hairline exterior.
+- No utiliza sombra, glow, barra de ventana decorativa ni controles que imiten un sistema operativo.
+- Signal Red se limita al cursor, el foco y los mensajes de error.
+- En viewports menores de `48rem`, tanto el prompt como el panel se ocultan por completo.
+- La terminal solo presenta comandos y contenido funcionales; no anuncia rutas inexistentes.
 
 Usar:
 
@@ -579,7 +611,7 @@ Evitar:
 - Neon glow.
 - Output decorativo que reduzca claridad.
 
-### 8.7 Datos, findings y contenido de seguridad
+### 8.8 Datos, findings y contenido de seguridad
 
 El tono de marca privilegia hechos por encima de adjetivos.
 
@@ -592,7 +624,7 @@ Para findings, métricas y salidas técnicas:
 - No suavizar hallazgos críticos mediante ambigüedad visual.
 
 
-### 8.8 Desarrollo de software
+### 8.9 Desarrollo de software
 
 Las secciones relacionadas con ingeniería deben verse como interfaces de sistemas reales, no como una simulación de código.
 
@@ -623,7 +655,7 @@ BUILD PASSED / 128 TESTS
 
 Para arquitectura visual, preferir líneas finas, labels mono y conexiones limpias. Evitar diagramas excesivamente ornamentales, neón o elementos 3D sin función.
 
-### 8.9 Marketing y comunicación comercial
+### 8.10 Marketing y comunicación comercial
 
 Las secciones de marketing deben utilizar la misma precisión visual que un reporte técnico.
 

@@ -1,14 +1,21 @@
 ---
 import SpeedInsights from "@vercel/speed-insights/astro";
+import { ClientRouter } from "astro:transitions";
+
+import GlobalTerminal from "../components/shell/GlobalTerminal.astro";
+import GlobalScrollControl from "../components/shell/GlobalScrollControl.astro";
+import SiteHeader from "../components/shell/SiteHeader.astro";
 
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description: string;
+  active?: "home" | "about" | "services" | "experience" | "contact";
+  scrollTarget?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, active = "home", scrollTarget = "/#about" } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,8 +30,12 @@ const { title, description } = Astro.props;
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/webp" href="/z3ntry.webp" />
     <title>{title}</title>
+    <ClientRouter fallback="animate" />
   </head>
   <body>
+    <SiteHeader active={active} />
+    <GlobalTerminal />
+    <GlobalScrollControl target={scrollTarget} />
     <slot />
     <SpeedInsights/>
   </body>

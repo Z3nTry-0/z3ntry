@@ -1,0 +1,283 @@
+<div class="global-terminal" data-global-terminal data-open="false">
+  <button
+    class="global-terminal__trigger"
+    type="button"
+    aria-label="Abrir terminal de Z3nTry"
+    aria-expanded="false"
+    aria-controls="z3ntry-terminal-panel"
+    data-terminal-trigger
+  >
+    <span>root@z3ntry</span>:<b data-terminal-path>~</b># <i aria-hidden="true"></i>
+  </button>
+
+  <section
+    class="global-terminal__panel"
+    id="z3ntry-terminal-panel"
+    aria-label="Terminal interactiva de Z3nTry"
+    aria-hidden="true"
+    data-terminal-panel
+    inert
+  >
+    <div class="global-terminal__toolbar">
+      <span>// INTERACTIVE TERMINAL</span>
+      <button type="button" aria-label="Cerrar terminal" data-terminal-close>×</button>
+    </div>
+
+    <div
+      class="global-terminal__output"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions text"
+      tabindex="0"
+      data-terminal-output
+    ></div>
+
+    <form class="global-terminal__form" data-terminal-form>
+      <label class="sr-only" for="z3ntry-terminal-input">Escribe un comando</label>
+      <span aria-hidden="true"><strong>root@z3ntry</strong>:<b data-terminal-path>~</b>#</span>
+      <input
+        id="z3ntry-terminal-input"
+        name="command"
+        type="text"
+        autocomplete="off"
+        autocapitalize="none"
+        spellcheck="false"
+        enterkeyhint="send"
+        data-terminal-input
+      />
+    </form>
+  </section>
+</div>
+
+<script>
+  import { setupGlobalTerminal } from "./global-terminal.client";
+
+  let cleanupTerminal = (): void => undefined;
+
+  function initializeTerminal(): void {
+    cleanupTerminal();
+    const root = document.querySelector<HTMLElement>("[data-global-terminal]");
+    if (root) cleanupTerminal = setupGlobalTerminal(root);
+  }
+
+  initializeTerminal();
+  document.addEventListener("astro:page-load", initializeTerminal);
+  document.addEventListener("astro:before-swap", () => cleanupTerminal());
+  window.addEventListener("pagehide", () => cleanupTerminal(), { once: true });
+</script>
+
+<style>
+  .global-terminal {
+    position: fixed;
+    z-index: 50;
+    bottom: clamp(1.5rem, 5vh, 3.5rem);
+    left: var(--page-gutter);
+    font-family: var(--font-mono);
+    font-size: clamp(0.65rem, 0.78vw, 0.78rem);
+    letter-spacing: 0.04em;
+  }
+
+  .global-terminal__trigger {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgb(242 242 242 / 66%);
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: text;
+    transition: color 160ms ease, opacity 160ms ease;
+  }
+
+  .global-terminal__trigger:hover,
+  .global-terminal__trigger:focus-visible {
+    color: var(--color-ash);
+  }
+
+  .global-terminal__trigger span,
+  .global-terminal__form strong {
+    color: var(--color-ash);
+    font-weight: 400;
+  }
+
+  .global-terminal b {
+    font-weight: 400;
+  }
+
+  .global-terminal__trigger i {
+    display: inline-block;
+    width: 0.56em;
+    height: 1em;
+    margin-left: 0.18rem;
+    background: var(--color-signal);
+    vertical-align: -0.15em;
+    animation: terminal-cursor 1.2s steps(1) infinite;
+  }
+
+  .global-terminal__panel {
+    position: absolute;
+    bottom: -0.8rem;
+    left: -0.8rem;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: min(34rem, calc(100vw - (2 * var(--page-gutter))));
+    height: 18rem;
+    border: 1px solid var(--color-hairline);
+    background: rgb(5 5 5 / 96%);
+    color: rgb(242 242 242 / 72%);
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateY(0.4rem) scaleY(0.06);
+    transform-origin: bottom left;
+    transition: opacity 150ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .global-terminal[data-open="true"] .global-terminal__panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scaleY(1);
+  }
+
+  .global-terminal[data-open="true"] .global-terminal__trigger {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .global-terminal__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.65rem 0.4rem 0.8rem;
+    border-bottom: 1px solid var(--color-hairline);
+    color: rgb(242 242 242 / 36%);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+  }
+
+  .global-terminal__toolbar button {
+    display: grid;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: rgb(242 242 242 / 54%);
+    font: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 160ms ease;
+  }
+
+  .global-terminal__toolbar button:hover,
+  .global-terminal__toolbar button:focus-visible {
+    color: var(--color-signal);
+  }
+
+  .global-terminal__output {
+    padding: 0.8rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    overscroll-behavior: contain;
+    user-select: text;
+  }
+
+  .global-terminal__output::-webkit-scrollbar {
+    display: none;
+  }
+
+  .global-terminal__output:empty::before {
+    color: rgb(242 242 242 / 34%);
+    content: "TYPE HELP TO LIST COMMANDS";
+  }
+
+  .global-terminal__output :global(.terminal-entry + .terminal-entry) {
+    margin-top: 0.75rem;
+  }
+
+  .global-terminal__output :global(.terminal-entry__command) {
+    color: rgb(242 242 242 / 78%);
+  }
+
+  .global-terminal__output :global(.terminal-entry__output) {
+    margin-top: 0.2rem;
+    color: rgb(242 242 242 / 62%);
+    font-size: 0.92em;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+
+  .global-terminal__output :global(.terminal-entry__output--muted) {
+    color: rgb(242 242 242 / 38%);
+  }
+
+  .global-terminal__output :global(.terminal-entry__output--error) {
+    color: var(--color-signal);
+  }
+
+  .global-terminal__form {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.65rem;
+    padding: 0.55rem 0.8rem;
+    border-top: 1px solid var(--color-hairline);
+    color: rgb(242 242 242 / 66%);
+  }
+
+  .global-terminal__form input {
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--color-ash);
+    font: inherit;
+    letter-spacing: inherit;
+    caret-color: var(--color-signal);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes terminal-cursor {
+    0%,
+    48% {
+      opacity: 1;
+    }
+
+    49%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .global-terminal__trigger,
+    .global-terminal__panel,
+    .global-terminal__toolbar button {
+      transition: none;
+    }
+
+    .global-terminal__trigger i {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .global-terminal {
+      display: none;
+    }
+  }
+</style>

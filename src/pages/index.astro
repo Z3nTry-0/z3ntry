@@ -1,13 +1,112 @@
 ---
 import Hero from "../features/home/components/Hero.astro";
+import AboutPage from "../features/about/components/AboutPage.astro";
+import InteractiveGlobe from "../features/home/components/InteractiveGlobe.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
   title="Z3nTry"
   description="Z3nTry conecta ciberseguridad, tecnología y crecimiento desde Colombia hacia el mundo."
+  scrollTarget="#about"
 >
-  <main>
+  <main class="landing" data-landing-experience>
+    <div class="landing__globe" data-landing-globe>
+      <InteractiveGlobe />
+    </div>
     <Hero />
+    <AboutPage scrollDriven showGlobe={false} />
   </main>
 </BaseLayout>
+
+<script>
+  let cleanupLanding = (): void => undefined;
+
+  function initializeLanding(): void {
+    cleanupLanding();
+    const root = document.querySelector<HTMLElement>("[data-landing-experience]");
+    if (!root) return;
+
+    let disposed = false;
+    let cleanupScroll = (): void => undefined;
+    let cleanupGlobe = (): void => undefined;
+    const globe = root.querySelector<HTMLElement>("[data-globe]");
+
+    void Promise.all([
+      import("../features/home/animations/landing-scroll.gsap"),
+      import("../features/home/animations/globe.client")
+    ])
+      .then(([{ setupLandingScroll }, { setupGlobe }]) => {
+        if (disposed) return;
+        cleanupScroll = setupLandingScroll(root);
+        if (globe) cleanupGlobe = setupGlobe(globe);
+      })
+      .catch(() => {
+        // Native scrolling and the CSS globe fallback remain available.
+      });
+
+    cleanupLanding = () => {
+      disposed = true;
+      cleanupScroll();
+      cleanupGlobe();
+    };
+  }
+
+  initializeLanding();
+  document.addEventListener("astro:page-load", initializeLanding);
+  document.addEventListener("astro:before-swap", () => cleanupLanding());
+  window.addEventListener("pagehide", () => cleanupLanding(), { once: true });
+</script>
+
+<style>
+  .landing {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-void);
+  }
+
+  :global(html:has([data-landing-experience])) {
+    scroll-snap-type: y mandatory;
+  }
+
+  .landing :global([data-hero]),
+  .landing :global([data-about]) {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .landing__globe {
+    position: fixed;
+    z-index: 0;
+    top: 50%;
+    right: -11vw;
+    width: min(64vw, 72rem);
+    aspect-ratio: 1;
+    opacity: 0.96;
+    transform: translateY(-50%);
+    transform-origin: center;
+  }
+
+  .landing :global(.hero),
+  .landing :global(.about) {
+    z-index: 1;
+    background: transparent;
+  }
+
+  @media (max-width: 63.99rem) {
+    .landing__globe {
+      right: -18vw;
+      width: min(82vw, 52rem);
+      opacity: 0.88;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .landing__globe {
+      right: -28vw;
+      width: min(112vw, 32rem);
+      min-width: 23rem;
+      opacity: 0.72;
+    }
+  }
+</style>
