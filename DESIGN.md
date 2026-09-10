@@ -496,7 +496,7 @@ Esta sección traduce el sistema visual documentado a patrones digitales. Son de
 - No se debe forzar que todos los elementos entren perfectamente en el viewport. La escala y el overflow son recursos visuales deliberados.
 - La izquierda mantiene abundante espacio negativo; el volumen visual principal se concentra en el centro y el lado derecho.
 - Bogotá debe permanecer visible en la composición inicial.
-- `Cybersecurity`, `Technologies` y `Marketing` se centran bajo el isologo y funcionan como un único descriptor.
+- `Cybersecurity`, `Technologies` y `Design` se centran bajo el isologo y funcionan como un único descriptor.
 - `A safer tomorrow` se ubica en el lado izquierdo.
 - `Ideas / defense / growth / globally` se ubica hacia el extremo inferior derecho cuando el viewport dispone de espacio suficiente.
 - Las líneas de ambos bloques editoriales aparecen debajo del texto, nunca a un costado.
