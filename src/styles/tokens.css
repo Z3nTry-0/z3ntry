@@ -1,0 +1,11 @@
+:root {
+  --color-void: #050505;
+  --color-signal: #e10600;
+  --color-ash: #f2f2f2;
+  --color-hairline: rgb(242 242 242 / 14%);
+  --color-muted: rgb(242 242 242 / 56%);
+  --font-display: "Archivo Black", "Liberation Sans", Arial, sans-serif;
+  --font-body: Inter, "Liberation Sans", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", "Liberation Mono", Consolas, monospace;
+  --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
+}

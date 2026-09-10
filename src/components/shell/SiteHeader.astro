@@ -1,0 +1,104 @@
+---
+const items = [
+  { index: "1", label: "Home", href: "#home", active: true },
+  { index: "2", label: "About", href: "#about" },
+  { index: "3", label: "Services", href: "#services" },
+  { index: "4", label: "Experience", href: "#experience" },
+  { index: "5", label: "Contact", href: "#contact" }
+];
+---
+
+<header class="site-header" data-hero-item>
+  <nav aria-label="Navegación principal">
+    <ul>
+      {items.map((item) => (
+        <li>
+          <a href={item.href} class:list={{ active: item.active }} aria-current={item.active ? "page" : undefined}>
+            <span aria-hidden="true">{item.index}:</span>[{item.label}]
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: absolute;
+    z-index: 10;
+    top: clamp(1.4rem, 4vh, 3rem);
+    left: var(--page-gutter);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem clamp(1rem, 2.5vw, 2.8rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    position: relative;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: clamp(0.72rem, 0.78vw, 0.86rem);
+    letter-spacing: 0.05em;
+    transition: color 160ms ease;
+  }
+
+  a::after {
+    position: absolute;
+    right: 0;
+    bottom: -0.45rem;
+    left: 0;
+    height: 1px;
+    background: var(--color-signal);
+    content: "";
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  a:hover,
+  a:focus-visible,
+  a.active {
+    color: var(--color-ash);
+  }
+
+  a.active {
+    color: var(--color-signal);
+  }
+
+  a:hover::after,
+  a:focus-visible::after,
+  a.active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 47.99rem) {
+    .site-header {
+      right: var(--page-gutter);
+    }
+
+    ul {
+      display: grid;
+      grid-template-columns: repeat(3, max-content);
+    }
+
+    li:nth-child(4),
+    li:nth-child(5) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a,
+    a::after {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,383 @@
+---
+import SiteHeader from "../../../components/shell/SiteHeader.astro";
+import InteractiveGlobe from "./InteractiveGlobe.astro";
+---
+
+<section class="hero" id="home" data-hero aria-labelledby="hero-title">
+  <SiteHeader />
+
+  <div class="hero__globe">
+    <InteractiveGlobe />
+  </div>
+
+  <div class="hero__signal" aria-hidden="true"></div>
+
+  <div class="hero__identity">
+    <h1 id="hero-title" data-hero-logo>
+      <span class="sr-only">Z3nTry</span>
+      <img src="/z3ntry.webp" width="1774" height="887" alt="" draggable="false" />
+    </h1>
+    <p class="hero__descriptor" data-hero-item>
+      <span>Cybersecurity</span>
+      <span>Technologies</span>
+      <span>Marketing</span>
+    </p>
+  </div>
+
+  <aside class="hero__note hero__note--top" aria-label="Visión" data-hero-item>
+    <p>A safer<br />tomorrow</p>
+    <span class="note-line" aria-hidden="true"></span>
+  </aside>
+
+  <aside class="hero__note hero__note--bottom" aria-label="Alcance" data-hero-item>
+    <p>Ideas<br />defense<br />growth<br />globally</p>
+    <span class="note-line" aria-hidden="true"></span>
+  </aside>
+
+  <p class="hero__terminal" data-hero-item><span>root@z3ntry</span>:~# <i aria-hidden="true"></i></p>
+
+  <a class="hero__scroll" href="#about" data-hero-item>
+    <span>Scroll down</span>
+    <svg viewBox="0 0 18 12" width="18" height="12" aria-hidden="true">
+      <path d="m2 2 7 7 7-7" fill="none" stroke="currentColor" stroke-width="1.25" />
+    </svg>
+  </a>
+
+  <div class="hero__coordinates" aria-hidden="true" data-hero-item>
+    <span>04.7110° N</span>
+    <span>074.0721° W</span>
+  </div>
+</section>
+
+<script>
+  import { setupHeroAnimation } from "../animations/hero.gsap";
+
+  const root = document.querySelector<HTMLElement>("[data-hero]");
+  const globe = root?.querySelector<HTMLElement>("[data-globe]");
+
+  if (root && globe) {
+    const cleanupHero = setupHeroAnimation(root);
+    let cleanupGlobe = (): void => undefined;
+    let disposed = false;
+    const preventCopy = (event: ClipboardEvent): void => event.preventDefault();
+    const preventDrag = (event: DragEvent): void => event.preventDefault();
+
+    root.addEventListener("copy", preventCopy);
+    root.addEventListener("dragstart", preventDrag);
+
+    window.setTimeout(() => {
+      void import("../animations/globe.client")
+        .then(({ setupGlobe }) => {
+          if (!disposed) cleanupGlobe = setupGlobe(globe);
+        })
+        .catch(() => {
+          // The CSS fallback remains visible when WebGL cannot initialize.
+        });
+    }, 120);
+
+    window.addEventListener("pagehide", () => {
+      disposed = true;
+      root.removeEventListener("copy", preventCopy);
+      root.removeEventListener("dragstart", preventDrag);
+      cleanupHero();
+      cleanupGlobe();
+    }, { once: true });
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: 100svh;
+    overflow: hidden;
+    background: var(--color-void);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .hero__globe {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: -11vw;
+    width: min(64vw, 72rem);
+    aspect-ratio: 1;
+    opacity: 0.96;
+    transform: translateY(-50%);
+  }
+
+  .hero__signal {
+    position: absolute;
+    z-index: 1;
+    top: 49%;
+    left: 8%;
+    width: clamp(3rem, 7vw, 7rem);
+    height: 2px;
+    background: var(--color-signal);
+    transform: rotate(-4deg);
+    transform-origin: right;
+  }
+
+  .hero__signal::after {
+    position: absolute;
+    top: -3px;
+    right: -0.15rem;
+    width: 0.45rem;
+    height: 0.45rem;
+    background: var(--color-signal);
+    content: "";
+    transform: rotate(18deg);
+  }
+
+  .hero__identity {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    left: 50%;
+    width: min(50vw, 50rem);
+    transform: translate(-50%, -50%);
+  }
+
+  h1 {
+    width: 100%;
+    line-height: 0;
+  }
+
+  h1 img {
+    width: 100%;
+    height: auto;
+    filter: contrast(1.08);
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .hero__descriptor {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.25rem, 4vw, 4.5rem);
+    margin-top: clamp(-1rem, -1.4vw, -0.3rem);
+    width: 100%;
+    padding-left: 0;
+    color: rgb(242 242 242 / 76%);
+    font-family: var(--font-mono);
+    font-size: clamp(0.58rem, 0.78vw, 0.78rem);
+    letter-spacing: 0.24em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .hero__note {
+    position: absolute;
+    z-index: 4;
+    right: var(--page-gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.65rem;
+    color: rgb(242 242 242 / 46%);
+    font-family: var(--font-mono);
+    font-size: clamp(0.55rem, 0.62vw, 0.68rem);
+    letter-spacing: 0.2em;
+    line-height: 1.55;
+    text-align: right;
+    text-transform: uppercase;
+  }
+
+  .hero__note--top {
+    top: 17%;
+    right: auto;
+    left: var(--page-gutter);
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero__note--bottom {
+    right: calc(var(--page-gutter) + 0.25rem);
+    bottom: 12%;
+  }
+
+  .note-line {
+    width: 2.7rem;
+    height: 1px;
+    background: var(--color-hairline);
+  }
+
+  .hero__note--bottom .note-line {
+    width: 2.7rem;
+    height: 1px;
+  }
+
+  .hero__terminal {
+    position: absolute;
+    z-index: 4;
+    bottom: clamp(1.5rem, 5vh, 3.5rem);
+    left: var(--page-gutter);
+    color: rgb(242 242 242 / 66%);
+    font-family: var(--font-mono);
+    font-size: clamp(0.65rem, 0.78vw, 0.78rem);
+    letter-spacing: 0.04em;
+  }
+
+  .hero__terminal span {
+    color: var(--color-ash);
+  }
+
+  .hero__terminal i {
+    display: inline-block;
+    width: 0.56em;
+    height: 1em;
+    margin-left: 0.18rem;
+    background: var(--color-signal);
+    vertical-align: -0.15em;
+    animation: cursor-blink 1.2s steps(1) infinite;
+  }
+
+  .hero__scroll {
+    position: absolute;
+    z-index: 4;
+    bottom: clamp(1.4rem, 4.5vh, 3.25rem);
+    left: 50%;
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    color: var(--color-signal);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+  }
+
+  .hero__scroll span {
+    color: rgb(242 242 242 / 48%);
+  }
+
+  .hero__scroll svg {
+    transition: transform 160ms ease;
+  }
+
+  .hero__scroll:hover svg,
+  .hero__scroll:focus-visible svg {
+    transform: translateY(0.22rem);
+  }
+
+  .hero__coordinates {
+    position: absolute;
+    z-index: 4;
+    top: 45%;
+    right: var(--page-gutter);
+    display: grid;
+    gap: 0.35rem;
+    color: rgb(242 242 242 / 30%);
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.13em;
+    text-align: right;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes cursor-blink {
+    0%,
+    48% {
+      opacity: 1;
+    }
+    49%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 63.99rem) {
+    .hero__globe {
+      top: 50%;
+      right: -18vw;
+      width: min(82vw, 52rem);
+      opacity: 0.88;
+    }
+
+    .hero__identity {
+      left: 50%;
+      width: min(60vw, 42rem);
+    }
+
+    .hero__coordinates,
+    .hero__note--bottom {
+      display: none;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .hero__globe {
+      top: 50%;
+      right: -28vw;
+      width: min(112vw, 32rem);
+      min-width: 23rem;
+      opacity: 0.72;
+      pointer-events: auto;
+    }
+
+    .hero__identity {
+      top: 52%;
+      left: 50%;
+      width: min(74vw, 29rem);
+      transform: translate(-50%, -50%);
+    }
+
+    .hero__descriptor {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: -0.15rem;
+      padding-left: 0;
+      letter-spacing: 0.18em;
+    }
+
+    .hero__note--top {
+      top: 27%;
+      right: auto;
+      left: var(--page-gutter);
+    }
+
+    .hero__signal {
+      top: 48%;
+      left: 0;
+    }
+
+    .hero__scroll {
+      left: auto;
+      right: var(--page-gutter);
+      transform: none;
+    }
+  }
+
+  @media (max-height: 40rem) and (min-width: 48rem) {
+    .hero__identity {
+      width: min(54vw, 54rem);
+    }
+
+    .hero__note--top {
+      top: 13%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__terminal i {
+      animation: none;
+    }
+
+    .hero__scroll svg {
+      transition: none;
+    }
+  }
+</style>

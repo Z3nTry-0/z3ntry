@@ -1,0 +1,35 @@
+{
+  "name": "z3ntry-landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint \"src/**/*.{astro,js,mjs,cjs,ts,mts,cts}\" \"astro.config.*\" \"eslint.config.*\"",
+    "lint:fix": "npm run lint -- --fix",
+    "test:lint": "npm run lint && npm run check",
+    "test": "npm run test:lint"
+  },
+  "dependencies": {
+    "gsap": "latest",
+    "three": "latest",
+    "three-globe": "latest",
+    "topojson-client": "latest",
+    "world-atlas": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "@eslint/js": "latest",
+    "@types/three": "latest",
+    "@types/topojson-client": "latest",
+    "@types/topojson-specification": "latest",
+    "astro": "latest",
+    "eslint": "latest",
+    "eslint-plugin-astro": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest"
+  }
+}
