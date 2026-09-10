@@ -1,0 +1,170 @@
+---
+import { aboutCapabilities } from "../data/capabilities";
+---
+
+<ol class="capabilities" id="capabilities" aria-label="Core capabilities">
+  {aboutCapabilities.map((capability) => (
+    <li class="capability" data-about-capability tabindex="0">
+      <span class="capability__index">[{capability.index}]</span>
+      <span class="capability__node" aria-hidden="true"><i></i><b>+</b></span>
+      <div class="capability__copy">
+        <h2>{capability.name}</h2>
+        <p class="capability__keywords">{capability.keywords.join(" / ")}</p>
+        <p class="capability__description">{capability.description}</p>
+        <span aria-hidden="true"></span>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .capabilities {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .capability {
+    display: grid;
+    grid-template-columns: 2.6rem 2.25rem 1fr;
+    min-height: 4.65rem;
+    color: rgb(242 242 242 / 48%);
+    font-family: var(--font-mono);
+    outline: none;
+    transition: min-height 240ms ease;
+  }
+
+  .capability__index {
+    padding-top: 0.65rem;
+    font-size: 0.52rem;
+    letter-spacing: 0.08em;
+  }
+
+  .capability__node {
+    position: relative;
+    display: grid;
+    place-items: start center;
+    padding-top: 0.45rem;
+  }
+
+  .capability__node::before {
+    position: absolute;
+    top: 1.35rem;
+    bottom: -0.05rem;
+    left: 50%;
+    width: 1px;
+    background: rgb(242 242 242 / 12%);
+    content: "";
+  }
+
+  .capability:last-child .capability__node::before {
+    display: none;
+  }
+
+  .capability__node i {
+    position: relative;
+    width: 1.15rem;
+    aspect-ratio: 1;
+    border: 1px solid rgb(242 242 242 / 26%);
+    border-radius: 50%;
+  }
+
+  .capability__node i::before,
+  .capability__node i::after {
+    position: absolute;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .capability__node i::before {
+    inset: 0.22rem;
+    border: 1px solid rgb(242 242 242 / 18%);
+  }
+
+  .capability__node i::after {
+    inset: 0.42rem;
+    background: var(--color-signal);
+  }
+
+  .capability__node b {
+    position: absolute;
+    top: 0.12rem;
+    right: 0.08rem;
+    color: rgb(242 242 242 / 42%);
+    font-size: 0.5rem;
+    font-weight: 400;
+  }
+
+  .capability__copy {
+    padding: 0.5rem 0 0.8rem 0.55rem;
+  }
+
+  h2 {
+    color: rgb(242 242 242 / 86%);
+    font-family: var(--font-mono);
+    font-size: clamp(0.7rem, 0.78vw, 0.84rem);
+    font-weight: 400;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .capability__keywords {
+    margin-top: 0.3rem;
+    font-size: 0.51rem;
+    letter-spacing: 0.13em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .capability__description {
+    max-width: 17rem;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    color: rgb(242 242 242 / 62%);
+    font-size: clamp(0.54rem, 0.58vw, 0.62rem);
+    letter-spacing: 0.035em;
+    line-height: 1.55;
+    opacity: 0;
+    transform: translateY(-0.25rem);
+    transition:
+      max-height 240ms ease,
+      margin-top 240ms ease,
+      opacity 180ms ease,
+      transform 240ms ease;
+  }
+
+  .capability:hover,
+  .capability:focus-visible {
+    min-height: 6.8rem;
+  }
+
+  .capability:hover .capability__description,
+  .capability:focus-visible .capability__description {
+    max-height: 3.5rem;
+    margin-top: 0.55rem;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .capability:focus-visible .capability__node i {
+    border-color: rgb(225 6 0 / 72%);
+  }
+
+  .capability__copy > span {
+    display: block;
+    width: 2rem;
+    height: 1px;
+    margin-top: 0.55rem;
+    background: rgb(225 6 0 / 60%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .capability,
+    .capability__description {
+      transition: none;
+    }
+  }
+</style>

@@ -356,6 +356,67 @@ is intentionally cropped by the right viewport edge. It must not be placed in a
 separate visual panel or divided from the logo. The centered logo may overlap the
 globe while the left side retains substantial negative space.
 
+### About-page globe
+
+The About page owns a separate, lighter globe instance in
+`src/features/about/animations/about-globe.client.ts`. Its behavior differs
+intentionally from the home Hero:
+
+- five restrained routes leave Bogotá toward representative global locations;
+- the camera starts facing Bogotá;
+- pointer and touch input allow horizontal and vertical orbit;
+- pan and zoom remain disabled;
+- damping provides controlled inertia;
+- slow automatic rotation pauses during interaction and resumes after 2.8 seconds;
+- the renderer and controls pause when offscreen or when the document is hidden;
+- reduced motion disables auto-rotation, moving dashes, and radar propagation.
+
+The About globe connection data belongs in
+`src/features/about/data/globe.ts`. The component must retain a CSS fallback and
+an accessible text description if WebGL is unavailable.
+
+The `ALWAYS ONE / STEP AHEAD.` overlay uses a responsive circular black fade to
+separate the message from the globe without introducing glow or a card surface.
+
+### Page transitions
+
+Home-to-feature navigation uses Astro's native `ClientRouter`. The root page
+transition combines a short fade with less than one rem of vertical movement.
+It must remain restrained, disable itself for reduced motion, and coordinate
+with each page's GSAP entrance rather than competing with it.
+
+Page-specific animation and WebGL setup must handle Astro navigation lifecycle
+events:
+
+- initialize or reinitialize on `astro:page-load`;
+- dispose GSAP contexts, WebGL resources, observers, timers, and listeners on
+  `astro:before-swap`;
+- retain `pagehide` cleanup for full document exits.
+
+### Home-to-About scroll sequence
+
+On the landing page, Home and About form a continuous vertical experience. GSAP
+`ScrollTrigger` owns the transition in
+`src/features/home/animations/landing-scroll.gsap.ts`:
+
+1. editorial Hero content fades and moves slightly upward;
+2. the single shared globe scales toward the viewer while remaining anchored to the right;
+3. Hero and About content overlap through a continuous crossfade;
+4. About content resolves progressively around the same WebGL scene;
+5. `ALWAYS ONE STEP AHEAD` appears last from within the dark circular fade.
+
+The sections move through the native document flow without pinning. Scrolling
+remains continuous and reversible, and the global `Scroll down` anchor targets
+`#about`. CSS scroll snap settles the document at the exact start of Home or
+About after the gesture. The global header, terminal, and scroll control are not
+animated by this sequence. Reduced-motion
+users receive ordinary document scrolling without pinning or large transforms.
+
+The black circular backdrop behind `ALWAYS ONE STEP AHEAD` is a separate DOM
+layer centered on the globe. ScrollTrigger fades and scales this layer before
+revealing the message copy, allowing the darkness to build gradually instead of
+appearing as a single opacity change with the text.
+
 ---
 
 ## 12. WebGL performance
@@ -507,6 +568,18 @@ section label entrance
 ```
 
 Avoid using Motion for the 3D renderer lifecycle.
+
+### Interactive terminal panel
+
+The global terminal owns its local open/close transition in component CSS. It
+expands vertically from the bottom-left prompt so its motion communicates the
+relationship between trigger and panel without competing with the globe or the
+page-level GSAP timelines. No other animation system may animate the panel's
+opacity or transform.
+
+When `prefers-reduced-motion: reduce` is active, the panel changes state without
+transition and the prompt cursor remains static. The terminal is not rendered
+visually below the desktop breakpoint defined in `DESIGN.md`.
 
 ---
 

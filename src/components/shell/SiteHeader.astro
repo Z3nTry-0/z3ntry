@@ -1,19 +1,30 @@
 ---
+interface Props {
+  active?: "home" | "about" | "services" | "experience" | "contact";
+}
+
+const { active = "home" } = Astro.props;
+
 const items = [
-  { index: "1", label: "Home", href: "#home", active: true },
-  { index: "2", label: "About", href: "#about" },
-  { index: "3", label: "Services", href: "#services" },
-  { index: "4", label: "Experience", href: "#experience" },
-  { index: "5", label: "Contact", href: "#contact" }
-];
+  { id: "home", index: "1", label: "Home", href: "/#home" },
+  { id: "about", index: "2", label: "About", href: "/#about" },
+  { id: "services", index: "3", label: "Services", href: "/services" },
+  { id: "experience", index: "4", label: "Experience", href: "/experience" },
+  { id: "contact", index: "5", label: "Contact", href: "/contact" }
+] as const;
 ---
 
-<header class="site-header" data-hero-item>
+<header class="site-header">
   <nav aria-label="Navegación principal">
     <ul>
       {items.map((item) => (
         <li>
-          <a href={item.href} class:list={{ active: item.active }} aria-current={item.active ? "page" : undefined}>
+          <a
+            href={item.href}
+            class:list={{ active: item.id === active }}
+            aria-current={item.id === active ? "page" : undefined}
+            data-nav-section={item.id === "home" || item.id === "about" ? item.id : undefined}
+          >
             <span aria-hidden="true">{item.index}:</span>[{item.label}]
           </a>
         </li>
@@ -24,8 +35,8 @@ const items = [
 
 <style>
   .site-header {
-    position: absolute;
-    z-index: 10;
+    position: fixed;
+    z-index: 40;
     top: clamp(1.4rem, 4vh, 3rem);
     left: var(--page-gutter);
   }
