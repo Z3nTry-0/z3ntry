@@ -512,7 +512,7 @@ Animation-specific accessibility is documented in `ANIMATIONS.md`.
 
 - title and meta description;
 - `robots` / `googlebot` (`index` by default, `noindex` for status pages);
-- canonical URL built from `site` in `astro.config.mjs` (`SITE_URL` env var, default `https://z3ntry.com`);
+- canonical URL built from `site` in `astro.config.mjs` (`SITE_URL` env var, default `https://www.z3ntry.com`);
 - Open Graph and Twitter `summary_large_image` tags pointing to `public/og-image.png` (1200×630);
 - favicons, `apple-touch-icon.png` and `site.webmanifest`;
 - JSON-LD (`Organization`, `WebSite`, `WebPage`) for indexable pages.
