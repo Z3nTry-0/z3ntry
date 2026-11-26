@@ -7,7 +7,7 @@ const routes = [
 ] as const;
 
 export const GET: APIRoute = ({ site }) => {
-  const base = site ?? new URL("https://z3ntry.com");
+  const base = site ?? new URL("https://www.z3ntry.com");
   const lastmod = new Date().toISOString().slice(0, 10);
   const urls = routes
     .map(({ path, changefreq, priority }) => [
