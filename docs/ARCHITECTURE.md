@@ -508,17 +508,16 @@ Animation-specific accessibility is documented in `ANIMATIONS.md`.
 
 ## 14. SEO
 
-`BaseLayout.astro` should support:
+`src/components/shell/SeoHead.astro` owns every SEO and link-preview tag. `BaseLayout.astro` and `StatusLayout.astro` render it instead of writing meta tags by hand. It provides:
 
-- title;
-- meta description;
-- canonical URL when deployment URL is known;
-- Open Graph title;
-- Open Graph description;
-- Open Graph image;
-- viewport;
-- theme color;
-- favicon.
+- title and meta description;
+- `robots` / `googlebot` (`index` by default, `noindex` for status pages);
+- canonical URL built from `site` in `astro.config.mjs` (`SITE_URL` env var, default `https://z3ntry.com`);
+- Open Graph and Twitter `summary_large_image` tags pointing to `public/og-image.png` (1200×630);
+- favicons, `apple-touch-icon.png` and `site.webmanifest`;
+- JSON-LD (`Organization`, `WebSite`, `WebPage`) for indexable pages.
+
+Crawl files: `public/robots.txt` and `src/pages/sitemap.xml.ts`. Add new indexable routes to the sitemap list; keep canonical paths with a trailing slash (`/about/`) to match the static build output.
 
 Use semantic landmarks:
 
