@@ -1,170 +1,142 @@
 ---
 import { aboutCapabilities } from "../data/capabilities";
+
+interface Props {
+  heading: "h3" | "h4";
+}
+
+const { heading: Heading } = Astro.props;
 ---
 
-<ol class="capabilities" id="capabilities" aria-label="Core capabilities">
-  {aboutCapabilities.map((capability) => (
-    <li class="capability" data-about-capability tabindex="0">
-      <span class="capability__index">[{capability.index}]</span>
-      <span class="capability__node" aria-hidden="true"><i></i><b>+</b></span>
+<ul class="capabilities" role="list">
+  {aboutCapabilities.map(({ name, statement, description, services }) => (
+    <li class="capability">
+      <svg class="capability__diagram" viewBox="0 0 240 180" fill="none" aria-hidden="true">
+        <path class="guide" d="M120 8v164M24 90h192" />
+        {name === "Cybersecurity" && <>
+          <circle class="guide" cx="120" cy="90" r="73" />
+          <path class="secondary" d="M120 29 173 51v36c0 30-20 53-53 67-33-14-53-37-53-67V51Z" />
+          <path d="m120 41 41 17v29c0 24-15 42-41 54-26-12-41-30-41-54V58Z" />
+          <path class="secondary" d="M79 90h82m-41-49v100" />
+          <path d="m108 91 8 8 16-18" class="signal" />
+          <circle cx="67" cy="90" r="3" class="node" />
+        </>}
+        {name === "Development" && <>
+          <path class="guide" d="m37 65 83-41 83 41v57l-83 41-83-41Z" />
+          <path class="secondary" d="m57 91 63 31 63-31m-126 20 63 31 63-31m-126 20 63 31 63-31" />
+          <path d="m57 74 63-31 63 31-63 31Z M57 74v17m126-17v17m-63 14v17" />
+          <path class="signal" d="m102 74 18-9 18 9-18 9Z" />
+          <circle cx="120" cy="122" r="3" class="node" />
+        </>}
+        {name === "Design" && <>
+          <path class="guide" d="M41 30h158v120H41Z M41 21v18m-9-9h18m149-9v18m-9-9h18M41 141v18m-9-9h18m149-9v18m-9-9h18" />
+          <rect x="52" y="42" width="136" height="96" rx="3" />
+          <path class="secondary" d="M52 62h136m-68 0v76m-53-56h38m-38 10h25m-25 10h31" />
+          <path d="m133 116 13-15 11 7 17-24" class="signal" />
+          <circle cx="174" cy="84" r="3" class="node" />
+        </>}
+      </svg>
       <div class="capability__copy">
-        <h2>{capability.name}</h2>
-        <p class="capability__keywords">{capability.keywords.join(" / ")}</p>
-        <p class="capability__description">{capability.description}</p>
-        <span aria-hidden="true"></span>
+        <Heading>{statement}<span>.</span></Heading>
+        <p class="capability__name">{name}</p>
+        <p class="capability__description">{description}</p>
+        <ul class="capability__services" role="list" aria-label={`${name} services`}>
+          {services.map((service) => <li>{service}</li>)}
+        </ul>
       </div>
     </li>
   ))}
-</ol>
+</ul>
 
 <style>
   .capabilities {
     display: grid;
-    gap: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .capability {
-    display: grid;
-    grid-template-columns: 2.6rem 2.25rem 1fr;
-    min-height: 4.65rem;
-    color: rgb(242 242 242 / 48%);
-    font-family: var(--font-mono);
-    outline: none;
-    transition: min-height 240ms ease;
+    min-inline-size: 0;
+    padding-inline: clamp(1.25rem, 3vw, 3rem);
   }
 
-  .capability__index {
-    padding-top: 0.65rem;
-    font-size: 0.52rem;
-    letter-spacing: 0.08em;
+  .capability:first-child { padding-inline-start: 0; }
+  .capability:last-child { padding-inline-end: 0; }
+  .capability + .capability { border-inline-start: 1px solid var(--color-hairline); }
+
+  .capability__diagram {
+    display: block;
+    inline-size: min(100%, 17rem);
+    margin: 0 auto clamp(1.5rem, 3vw, 2.75rem);
+    color: var(--color-muted);
+    stroke: currentColor;
+    stroke-width: 1.15;
+    stroke-linejoin: round;
+    stroke-linecap: round;
   }
 
-  .capability__node {
-    position: relative;
-    display: grid;
-    place-items: start center;
-    padding-top: 0.45rem;
-  }
+  .guide { opacity: 0.22; stroke-dasharray: 2 5; }
+  .secondary { opacity: 0.55; }
+  .signal { stroke: var(--color-signal); stroke-width: 1.6; }
+  .node { fill: var(--color-signal); stroke: none; }
 
-  .capability__node::before {
-    position: absolute;
-    top: 1.35rem;
-    bottom: -0.05rem;
-    left: 50%;
-    width: 1px;
-    background: rgb(242 242 242 / 12%);
-    content: "";
-  }
-
-  .capability:last-child .capability__node::before {
-    display: none;
-  }
-
-  .capability__node i {
-    position: relative;
-    width: 1.15rem;
-    aspect-ratio: 1;
-    border: 1px solid rgb(242 242 242 / 26%);
-    border-radius: 50%;
-  }
-
-  .capability__node i::before,
-  .capability__node i::after {
-    position: absolute;
-    border-radius: 50%;
-    content: "";
-  }
-
-  .capability__node i::before {
-    inset: 0.22rem;
-    border: 1px solid rgb(242 242 242 / 18%);
-  }
-
-  .capability__node i::after {
-    inset: 0.42rem;
-    background: var(--color-signal);
-  }
-
-  .capability__node b {
-    position: absolute;
-    top: 0.12rem;
-    right: 0.08rem;
-    color: rgb(242 242 242 / 42%);
-    font-size: 0.5rem;
-    font-weight: 400;
-  }
-
-  .capability__copy {
-    padding: 0.5rem 0 0.8rem 0.55rem;
-  }
-
-  h2 {
-    color: rgb(242 242 242 / 86%);
-    font-family: var(--font-mono);
-    font-size: clamp(0.7rem, 0.78vw, 0.84rem);
-    font-weight: 400;
-    letter-spacing: 0.13em;
+  :is(h3, h4) {
+    margin: 0 0 0.4rem;
+    font: 700 clamp(1.25rem, 2.45vw, 2.15rem)/1.08 var(--font-display);
+    letter-spacing: -0.035em;
     text-transform: uppercase;
   }
 
-  .capability__keywords {
-    margin-top: 0.3rem;
-    font-size: 0.51rem;
-    letter-spacing: 0.13em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
+  :is(h3, h4) span { color: var(--color-signal); }
+  .capability__name { font-weight: 650; }
 
   .capability__description {
-    max-width: 17rem;
-    max-height: 0;
-    margin-top: 0;
-    overflow: hidden;
-    color: rgb(242 242 242 / 62%);
-    font-size: clamp(0.54rem, 0.58vw, 0.62rem);
-    letter-spacing: 0.035em;
+    max-inline-size: 43ch;
+    margin-block-start: 0.85rem;
+    color: var(--color-muted);
     line-height: 1.55;
-    opacity: 0;
-    transform: translateY(-0.25rem);
-    transition:
-      max-height 240ms ease,
-      margin-top 240ms ease,
-      opacity 180ms ease,
-      transform 240ms ease;
   }
 
-  .capability:hover,
-  .capability:focus-visible {
-    min-height: 6.8rem;
+  .capability__services {
+    display: grid;
+    gap: 0.45rem;
+    margin: 1.35rem 0 0;
+    padding: 1rem 0 0;
+    border-block-start: 1px solid var(--color-hairline);
+    color: var(--color-muted);
+    list-style: none;
   }
 
-  .capability:hover .capability__description,
-  .capability:focus-visible .capability__description {
-    max-height: 3.5rem;
-    margin-top: 0.55rem;
-    opacity: 1;
-    transform: translateY(0);
+  .capability__services li {
+    position: relative;
+    padding-inline-start: 0.85rem;
+    line-height: 1.45;
   }
 
-  .capability:focus-visible .capability__node i {
-    border-color: rgb(225 6 0 / 72%);
+  .capability__services li::before {
+    position: absolute;
+    inset: 0.63em auto auto 0;
+    inline-size: 0.25rem;
+    block-size: 1px;
+    background: currentColor;
+    content: "";
   }
 
-  .capability__copy > span {
-    display: block;
-    width: 2rem;
-    height: 1px;
-    margin-top: 0.55rem;
-    background: rgb(225 6 0 / 60%);
-  }
+  @media (max-width: 52rem) {
+    .capabilities { grid-template-columns: minmax(0, 1fr); }
 
-  @media (prefers-reduced-motion: reduce) {
     .capability,
-    .capability__description {
-      transition: none;
+    .capability + .capability {
+      padding: clamp(1.5rem, 5vw, 2.5rem) 0;
+      border-inline-start: 0;
+      border-block-start: 1px solid var(--color-hairline);
+    }
+
+    .capability__diagram {
+      inline-size: min(64%, 13rem);
+      margin-block-end: 1.25rem;
     }
   }
 </style>

@@ -2,6 +2,8 @@
 import Hero from "../features/home/components/Hero.astro";
 import AboutPage from "../features/about/components/AboutPage.astro";
 import InteractiveGlobe from "../features/home/components/InteractiveGlobe.astro";
+import ContactSection from "../features/contact/components/ContactSection.astro";
+import SiteFooter from "../components/shell/SiteFooter.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
@@ -11,72 +13,128 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   scrollTarget="#about"
 >
   <main class="landing" data-landing-experience>
-    <div class="landing__globe" data-landing-globe>
-      <InteractiveGlobe />
+    <div class="landing__scene">
+      <div class="landing__stage" data-landing-stage>
+        <div class="landing__globe" data-landing-globe>
+          <InteractiveGlobe />
+        </div>
+      </div>
+      <div class="landing__sections">
+        <Hero />
+        <AboutPage scrollDriven showGlobe={false} />
+        <ContactSection />
+      </div>
     </div>
-    <Hero />
-    <AboutPage scrollDriven showGlobe={false} />
   </main>
+  <SiteFooter />
 </BaseLayout>
 
 <script>
+  import { scheduleHomeIntroScroll } from "../features/home/animations/home-intro-scroll.client";
+  import { setupLandingGlobePosition } from "../features/home/animations/landing-globe-position";
+  import { mountVisibleScene } from "../lib/three/mount-visible-scene";
+
   let cleanupLanding = (): void => undefined;
+  let currentLanding: HTMLElement | null = null;
+  let introConsidered = false;
 
   function initializeLanding(): void {
-    cleanupLanding();
     const root = document.querySelector<HTMLElement>("[data-landing-experience]");
+    if (root === currentLanding) return;
+    cleanupLanding();
     if (!root) return;
+    currentLanding = root;
 
     let disposed = false;
     let cleanupScroll = (): void => undefined;
-    let cleanupGlobe = (): void => undefined;
     const globe = root.querySelector<HTMLElement>("[data-globe]");
+    const services = root.querySelector<HTMLElement>("#services");
+    const contact = root.querySelector<HTMLElement>("[data-contact]");
+    const utilities = document.querySelector<HTMLElement>("[data-shell-utilities]");
+    const contactObserver = contact && utilities ? new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && utilities.contains(document.activeElement)) {
+        contact.querySelector<HTMLElement>("#contact-title")?.focus({ preventScroll: true });
+      }
+      utilities.hidden = entry.isIntersecting;
+    }) : undefined;
+    if (contact) contactObserver?.observe(contact);
+    const cancelIntro = !introConsidered && services ? scheduleHomeIntroScroll(services) : undefined;
+    introConsidered = true;
+    const cleanupGlobePosition = setupLandingGlobePosition(root);
 
-    void Promise.all([
-      import("../features/home/animations/landing-scroll.gsap"),
-      import("../features/home/animations/globe.client")
-    ])
-      .then(([{ setupLandingScroll }, { setupGlobe }]) => {
-        if (disposed) return;
-        cleanupScroll = setupLandingScroll(root);
-        if (globe) cleanupGlobe = setupGlobe(globe);
+    void import("../features/home/animations/landing-scroll.gsap")
+      .then(({ setupLandingScroll }) => {
+        if (!disposed) cleanupScroll = setupLandingScroll(root);
       })
       .catch(() => {
-        // Native scrolling and the CSS globe fallback remain available.
+        // Native scrolling remains available.
       });
+
+    const cleanupGlobe = globe
+      ? mountVisibleScene(globe, () => import("../features/home/animations/globe.client").then(({ setupGlobe }) => setupGlobe))
+      : undefined;
 
     cleanupLanding = () => {
       disposed = true;
+      currentLanding = null;
+      cancelIntro?.();
+      contactObserver?.disconnect();
+      if (utilities) utilities.hidden = false;
       cleanupScroll();
-      cleanupGlobe();
+      cleanupGlobe?.();
+      cleanupGlobePosition();
     };
   }
 
   initializeLanding();
   document.addEventListener("astro:page-load", initializeLanding);
   document.addEventListener("astro:before-swap", () => cleanupLanding());
-  window.addEventListener("pagehide", () => cleanupLanding(), { once: true });
+  window.addEventListener("pagehide", () => cleanupLanding());
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) initializeLanding();
+  });
 </script>
 
 <style>
+  :global(html:has([data-landing-experience])) {
+    scrollbar-width: none;
+  }
+
+  :global(html:has([data-landing-experience])::-webkit-scrollbar) {
+    display: none;
+  }
+
   .landing {
     position: relative;
     isolation: isolate;
     background: var(--color-void);
   }
 
-  :global(html:has([data-landing-experience])) {
-    scroll-snap-type: y mandatory;
+  .landing__scene {
+    display: grid;
   }
 
-  .landing :global([data-hero]),
-  .landing :global([data-about]) {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+  .landing__stage,
+  .landing__sections {
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+  }
+
+  .landing__stage {
+    position: sticky;
+    inset-block-start: 0;
+    align-self: start;
+    block-size: 100svh;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .landing__sections {
+    pointer-events: none;
   }
 
   .landing__globe {
-    position: fixed;
+    position: absolute;
     z-index: 0;
     top: 50%;
     right: -11vw;
@@ -85,6 +143,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     opacity: 0.96;
     transform: translateY(-50%);
     transform-origin: center;
+    pointer-events: auto;
   }
 
   .landing :global(.hero),

@@ -1,0 +1,18 @@
+---
+import SiteFooter from "../components/shell/SiteFooter.astro";
+import ContactSection from "../features/contact/components/ContactSection.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Contact | Z3nTry" description="Contacta a Z3nTry." active="contact" showUtilities={false}>
+  <main>
+    <ContactSection standalone />
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  main {
+    min-block-size: calc(100svh - 3.25rem);
+  }
+</style>

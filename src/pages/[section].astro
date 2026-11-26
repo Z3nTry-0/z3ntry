@@ -1,0 +1,18 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import StatusLayout from "../layouts/StatusLayout.astro";
+
+export const getStaticPaths = (() => [
+  { params: { section: "services" }, props: { title: "Services" } },
+  { params: { section: "experience" }, props: { title: "Experience" } },
+]) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { title } = Astro.props;
+---
+
+<StatusLayout
+  title={title}
+  titleLang="en"
+  description="Esta sección aún no está disponible."
+/>

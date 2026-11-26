@@ -260,31 +260,13 @@ active destinations are selected at runtime.
 
 The globe should communicate select global connections, not a full mesh.
 
-Hero routes are transient: a route travels once from Bogotá to its destination,
-then it is removed and replaced with another randomly selected destination. Keep
-the active route count bounded and avoid duplicate active destinations.
-
-Current behavior:
-
-- 10 active route slots on desktop and tablet;
-- 8 active route slots on compact viewports;
-- 3.2-second travel time from origin to destination;
-- staggered initial progress so routes do not finish simultaneously;
-- one moving dash per route rather than a permanently filled arc;
-- immediate removal at arrival;
-- random replacement from the destination catalog;
-- no duplicate destination among currently active routes.
-
-Recommended hero range:
-
-```text
-5–12 visible routes
-```
-
-Use fewer connections on smaller devices when appropriate.
-
-Do not raise the current 8–10 active-route range merely because the destination
-catalog grows. New locations increase variety, not simultaneous WebGL density.
+Both globes draw each route progressively from Bogotá to its destination over
+2.6 seconds. The completed line stays visible for two seconds without blinking
+while a small point travels along it from Bogotá to the destination. The line
+then disappears before another destination is selected. Starts are
+staggered, with at most ten routes on desktop and four on compact or
+coarse-pointer devices. Active destinations do not repeat. Reduced motion
+shows static completed routes without a moving point or replacement.
 
 Avoid:
 
@@ -362,21 +344,18 @@ The About page owns a separate, lighter globe instance in
 `src/features/about/animations/about-globe.client.ts`. Its behavior differs
 intentionally from the home Hero:
 
-- five restrained routes leave Bogotá toward representative global locations;
+- up to ten routes leave Bogotá toward representative global locations;
 - the camera starts facing Bogotá;
 - pointer and touch input allow horizontal and vertical orbit;
 - pan and zoom remain disabled;
 - damping provides controlled inertia;
 - slow automatic rotation pauses during interaction and resumes after 2.8 seconds;
 - the renderer and controls pause when offscreen or when the document is hidden;
-- reduced motion disables auto-rotation, moving dashes, and radar propagation.
+- reduced motion disables auto-rotation, route animation, and radar propagation.
 
 The About globe connection data belongs in
 `src/features/about/data/globe.ts`. The component must retain a CSS fallback and
 an accessible text description if WebGL is unavailable.
-
-The `ALWAYS ONE / STEP AHEAD.` overlay uses a responsive circular black fade to
-separate the message from the globe without introducing glow or a card surface.
 
 ### Page transitions
 
@@ -392,30 +371,52 @@ events:
 - dispose GSAP contexts, WebGL resources, observers, timers, and listeners on
   `astro:before-swap`;
 - retain `pagehide` cleanup for full document exits.
+- remount the globe on a persisted `pageshow` after the browser restores a
+  previously cached document.
+
+Both globes defer WebGL until the container is near the viewport and the
+document is visible. The CSS fallback stays visible until a sized canvas has
+drawn, and returns on context loss until Three.js restores the renderer.
+Hidden or offscreen globes pause rendering and three-globe's internal cycles.
+The active render loop follows the browser's `requestAnimationFrame` cadence
+on all devices, without a separate FPS cap.
+Compact devices retain a DPR of at most 1 and no MSAA. With reduced motion, the canvas only redraws
+for initialization, resizing, restoration or direct control input. Vertical
+swipes and pinch zoom remain native; horizontal dragging rotates the globe.
 
 ### Home-to-About scroll sequence
+
+The Hero logo image drifts up and back in a continuous, gentle loop. The CSS
+animation runs on the image so it does not override GSAP transforms on the
+heading or section. Reduced motion leaves the image still.
 
 On the landing page, Home and About form a continuous vertical experience. GSAP
 `ScrollTrigger` owns the transition in
 `src/features/home/animations/landing-scroll.gsap.ts`:
 
-1. editorial Hero content fades and moves slightly upward;
-2. the single shared globe scales toward the viewer while remaining anchored to the right;
-3. Hero and About content overlap through a continuous crossfade;
-4. About content resolves progressively around the same WebGL scene;
-5. `ALWAYS ONE STEP AHEAD` appears last from within the dark circular fade.
+1. the Hero identity fades and moves slightly upward; the red accent only
+   animates on entrance, while the side notes and coordinates have no tweens;
+2. the single shared globe eases into the full square reserved beside (or below)
+   the About introduction; `landing-globe-position.ts` owns its transform;
+3. About copy and the complete capability lists remain stationary and visible.
 
-The sections move through the native document flow without pinning. Scrolling
-remains continuous and reversible, and the global `Scroll down` anchor targets
-`#about`. CSS scroll snap settles the document at the exact start of Home or
-About after the gesture. The global header, terminal, and scroll control are not
-animated by this sequence. Reduced-motion
-users receive ordinary document scrolling without pinning or large transforms.
+The document scrolls freely and reversibly, without snap or pinning. The globe
+stage stays sticky through Contact and leaves before the footer. After About’s
+visual is offscreen, the same canvas moves to the Contact slot before it enters
+the viewport. The standalone Contact page keeps a static SVG in that slot. No
+new WebGL scene is created. Reduced motion skips the Hero interpolation.
+The `Scroll down` anchor targets
+`#about` and is shown in Home. The navigation tracks Home, About, Services,
+Experience and Contact at the midpoint of the viewport; the terminal keeps its
+Home/About context. One short SVG signal runs along a hairline between the
+closing About note and Contact (beside the note on `/about`). It follows the
+scroll on entry and remains static without view timelines or with reduced motion.
 
-The black circular backdrop behind `ALWAYS ONE STEP AHEAD` is a separate DOM
-layer centered on the globe. ScrollTrigger fades and scales this layer before
-revealing the message copy, allowing the darkness to build gradually instead of
-appearing as a single opacity change with the text.
+On a fresh visit to the top of Home (`/` or `/#home`), `home-intro-scroll.client.ts`
+waits 1.7 seconds before a one-time native smooth scroll to Services. User
+interaction, leaving the page, a different fragment target, or reduced-motion preference
+prevent the automatic scroll. With reduced motion, the scroll-linked animations
+are also disabled and About remains visible in normal document flow.
 
 ---
 
@@ -528,7 +529,7 @@ Also check reduced motion in JavaScript before initializing heavy effects.
 When reduced motion is enabled:
 
 - disable globe auto-rotation;
-- disable moving network dashes and route replacement;
+- disable progressive route drawing, moving route indicators, and replacement;
 - avoid large scroll-linked transforms;
 - skip long entrance timelines;
 - replace complex movement with immediate rendering or short opacity changes;
@@ -647,6 +648,14 @@ export function setupHeroAnimation(
 
 - stop/cancel persistent animations when the component is removed;
 - clean up observers/listeners created around Motion.
+
+### ASCII panel lifecycle
+
+- The divider samples a flat SVG into a Canvas 2D character grid; it does not
+  allocate a Three.js renderer. Only lock glyphs vary at rest. A click anywhere
+  on the panel, touch, or keyboard activation starts a short localized ripple.
+- The glyph timer and ripple stop offscreen or when the document is hidden.
+  With reduced motion, the static illustration is used without mounting Canvas.
 
 ### Three.js cleanup
 

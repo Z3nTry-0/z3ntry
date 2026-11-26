@@ -8,9 +8,9 @@ const { active = "home" } = Astro.props;
 const items = [
   { id: "home", index: "1", label: "Home", href: "/#home" },
   { id: "about", index: "2", label: "About", href: "/#about" },
-  { id: "services", index: "3", label: "Services", href: "/services" },
-  { id: "experience", index: "4", label: "Experience", href: "/experience" },
-  { id: "contact", index: "5", label: "Contact", href: "/contact" }
+  { id: "services", index: "3", label: "Services", href: "/#services" },
+  { id: "experience", index: "4", label: "Experience", href: "/#experience" },
+  { id: "contact", index: "5", label: "Contact", href: "/#contact" }
 ] as const;
 ---
 
@@ -23,7 +23,7 @@ const items = [
             href={item.href}
             class:list={{ active: item.id === active }}
             aria-current={item.id === active ? "page" : undefined}
-            data-nav-section={item.id === "home" || item.id === "about" ? item.id : undefined}
+            data-nav-section={item.id}
           >
             <span aria-hidden="true">{item.index}:</span>[{item.label}]
           </a>
@@ -37,8 +37,9 @@ const items = [
   .site-header {
     position: fixed;
     z-index: 40;
-    top: clamp(1.4rem, 4vh, 3rem);
-    left: var(--page-gutter);
+    inset: 0 0 auto;
+    padding: clamp(1.4rem, 4vh, 3rem) var(--page-gutter) 1rem;
+    background: var(--color-void);
   }
 
   ul {
@@ -61,14 +62,13 @@ const items = [
 
   a::after {
     position: absolute;
-    right: 0;
-    bottom: -0.45rem;
-    left: 0;
-    height: 1px;
+    inset: auto auto -0.42rem 0;
+    width: 0.4rem;
+    height: 0.18rem;
     background: var(--color-signal);
     content: "";
     opacity: 0;
-    transform: scaleX(0);
+    transform: skewX(-30deg) scaleX(0);
     transform-origin: left;
     transition: opacity 160ms ease, transform 160ms ease;
   }
@@ -79,30 +79,16 @@ const items = [
     color: var(--color-ash);
   }
 
-  a.active {
-    color: var(--color-signal);
-  }
-
   a:hover::after,
   a:focus-visible::after,
   a.active::after {
     opacity: 1;
-    transform: scaleX(1);
+    transform: skewX(-30deg) scaleX(1);
   }
 
   @media (max-width: 47.99rem) {
-    .site-header {
-      right: var(--page-gutter);
-    }
-
     ul {
-      display: grid;
-      grid-template-columns: repeat(3, max-content);
-    }
-
-    li:nth-child(4),
-    li:nth-child(5) {
-      display: none;
+      column-gap: 1rem;
     }
   }
 

@@ -1,0 +1,137 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  status?: number;
+  titleLang?: string;
+}
+
+const { title, description, status, titleLang } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/webp" href="/z3ntry.webp" />
+    <title>{title} | Z3nTry</title>
+  </head>
+  <body>
+    <header class="status-header">
+      <a class="brand-link" href="/" aria-label="Z3nTry: inicio">
+        <img src="/z3ntry.webp" width="1774" height="887" alt="" />
+      </a>
+    </header>
+    <main>
+      <h1 lang={titleLang}>
+        {title}
+      </h1>
+      {
+        status
+          ? <p class="status-code">HTTP {status}</p>
+          : <p class="status-code" lang="en">Coming soon</p>
+      }
+      <p class="status-description">{description}</p>
+      <a class="home-link" href="/">
+        <svg class="home-link__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M19 12H5m0 0 6-6m-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Volver al inicio</span>
+      </a>
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-block-size: 100svh;
+    padding-inline: var(--page-gutter);
+  }
+
+  .status-header {
+    padding-block: 1rem;
+    border-block-end: 1px solid var(--color-hairline);
+  }
+
+  .brand-link {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .status-header img {
+    display: block;
+    inline-size: 8rem;
+    block-size: auto;
+  }
+
+  main {
+    align-self: center;
+    padding-block: 3rem;
+  }
+
+  h1 {
+    margin: 0;
+    max-inline-size: 18ch;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .status-code {
+    margin-block: 1rem;
+    font-family: var(--font-mono);
+  }
+
+  .status-code::before {
+    display: inline-block;
+    inline-size: 1.5rem;
+    margin-inline-end: 0.65rem;
+    border-block-start: 1px solid var(--color-signal);
+    vertical-align: middle;
+    content: "";
+  }
+
+  .status-description {
+    max-inline-size: 42ch;
+    line-height: 1.55;
+  }
+
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    margin-block-start: 1rem;
+    font-family: var(--font-mono);
+  }
+
+  .home-link span {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .home-link:is(:hover, :focus-visible) span {
+    text-decoration-color: var(--color-signal);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .home-link__arrow {
+      transition: transform 140ms ease-out;
+    }
+
+    .home-link:is(:hover, :focus-visible) .home-link__arrow {
+      transform: translateX(-0.25rem);
+    }
+  }
+</style>

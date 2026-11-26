@@ -14,9 +14,10 @@ interface Props {
   description: string;
   active?: "home" | "about" | "services" | "experience" | "contact";
   scrollTarget?: string;
+  showUtilities?: boolean;
 }
 
-const { title, description, active = "home", scrollTarget = "/#about" } = Astro.props;
+const { title, description, active = "home", scrollTarget = "/#about", showUtilities = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -35,8 +36,12 @@ const { title, description, active = "home", scrollTarget = "/#about" } = Astro.
   </head>
   <body>
     <SiteHeader active={active} />
-    <GlobalTerminal />
-    <GlobalScrollControl target={scrollTarget} />
+    {showUtilities && (
+      <div data-shell-utilities>
+        <GlobalTerminal />
+        <GlobalScrollControl target={scrollTarget} />
+      </div>
+    )}
     <slot />
     <Analytics />
     <SpeedInsights />
