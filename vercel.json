@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "^/(?!api(?:/|$)|_[^/]+(?:/|$))(?:[^/]+/)*(?:[^./]+(?:\\.html)?)/?$",
+      "methods": ["GET", "HEAD"],
+      "has": [
+        { "type": "header", "key": "sec-fetch-mode", "value": "^navigate$" },
+        { "type": "header", "key": "accept", "value": "^\\s*text/html\\s*(?:,.*)?$" }
+      ],
+      "status": 307,
+      "headers": { "Location": "/", "Cache-Control": "no-store", "Vary": "Accept, Sec-Fetch-Mode" }
+    }
+  ]
+}

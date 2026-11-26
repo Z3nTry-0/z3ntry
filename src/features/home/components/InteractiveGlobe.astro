@@ -18,7 +18,7 @@
     height: 100%;
     overflow: visible;
     cursor: grab;
-    touch-action: pan-y;
+    touch-action: pan-y pinch-zoom;
   }
 
   .globe-shell:active {
@@ -36,6 +36,7 @@
 
   .globe-fallback {
     position: absolute;
+    pointer-events: none;
     top: 50%;
     left: 50%;
     width: min(84%, 42rem);

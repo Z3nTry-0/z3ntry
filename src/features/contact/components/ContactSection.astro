@@ -1,0 +1,91 @@
+---
+import ContactForm from "./ContactForm.astro";
+
+interface Props {
+  standalone?: boolean;
+}
+
+const { standalone = false } = Astro.props;
+const Heading = standalone ? "h1" : "h2";
+---
+
+<section class:list={["contact", { "contact--embedded": !standalone }]} id="contact" aria-labelledby="contact-title" data-contact>
+  <div class="contact__frame">
+    <div class="contact__content">
+      <Heading id="contact-title" tabindex="-1" lang="en">Contact<span>.</span></Heading>
+      <p>Cuéntanos qué necesitas proteger, construir o mejorar. Si todavía estás definiendo el alcance, empecemos por el problema que quieres resolver.</p>
+      <ContactForm />
+    </div>
+    <div class="contact__visual" data-globe-contact-slot={!standalone || undefined} aria-hidden="true">
+      <svg viewBox="0 0 440 440" fill="none" focusable="false">
+        <circle cx="220" cy="220" r="176" />
+        <circle cx="220" cy="220" r="204" pathLength="160" stroke-dasharray="0.3 0.7" />
+        <ellipse cx="220" cy="220" rx="176" ry="68" />
+        <ellipse cx="220" cy="220" rx="74" ry="176" />
+        <path class="contact__signal" d="M220 44a176 176 0 0 1 124 51m-248 249a176 176 0 0 1-40-59" />
+        <circle class="contact__node" cx="344" cy="95" r="3" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    padding-block: clamp(6.5rem, 11vw, 10rem) clamp(4rem, 9vw, 8rem);
+  }
+
+  .contact--embedded {
+    padding-block-start: clamp(5.75rem, 7vw, 7rem);
+  }
+
+  .contact__frame {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+    inline-size: var(--page-frame);
+    margin-inline: auto;
+  }
+
+  .contact__content {
+    position: relative;
+    pointer-events: auto;
+  }
+
+  .contact__visual {
+    inline-size: min(100%, 27rem);
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+
+  .contact__visual svg {
+    display: block;
+    inline-size: 100%;
+    stroke: var(--color-hairline);
+  }
+
+  :global([data-globe-following]) [data-globe-contact-slot] svg { visibility: hidden; }
+  .contact__signal { stroke: var(--color-signal); stroke-opacity: 0.6; }
+  .contact__node { fill: var(--color-signal); stroke: none; }
+
+  #contact-title {
+    margin: 0 0 1rem;
+    font: 700 clamp(2.75rem, 7vw, 6rem)/1 var(--font-display);
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  #contact-title span { color: var(--color-signal); }
+
+  .contact p {
+    max-inline-size: 48ch;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 42rem) {
+    .contact__frame { grid-template-columns: minmax(0, 1fr); }
+    .contact__visual { inline-size: min(78vw, 18rem); }
+  }
+</style>

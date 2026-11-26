@@ -520,24 +520,25 @@ En el Hero se evita la selección accidental de contenido, la copia desde la int
 
 La página About extiende el Hero como una interfaz técnica de sistema, no como una landing page independiente con otro lenguaje visual.
 
-- La composición desktop combina una zona editorial izquierda de aproximadamente 50–55% y un globo sobredimensionado a la derecha, sin divisor físico entre ambas.
-- El headline `WE SECURE. / WE ENGINEER. / WE POSITION.` domina la jerarquía. Los puntos finales utilizan Signal Red.
-- El contenido describe únicamente las capacidades oficiales: Cybersecurity, Development y Design.
-- Las capacidades se representan como una topología vertical de nodos pequeños, anillos finos y líneas de conexión; no como cards.
-- Cada nodo revela una descripción breve al recibir hover o foco de teclado; el cambio amplía la información sin convertir el elemento en una card.
-- El rail narrativo `MINDSET / BUILD / PROTECT / CREATE / SCALE` ocupa la posición técnica superior izquierda. No se muestra el identificador redundante `02:[ABOUT] / COMPANY PROFILE`.
-- El mensaje `ALWAYS ONE / STEP AHEAD.` se superpone al planeta, con la segunda línea en Signal Red y un área circular negra difuminada que preserva su lectura sobre las líneas geográficas.
-- El párrafo corporativo debe tener mayor tamaño y contraste que la metadata, manteniendo un ancho de lectura controlado y tipografía monoespaciada.
-- Metadata, coordenadas, grid parcial y terminal se mantienen secundarios y con contraste bajo.
-- El globo usa costas en gris apagado, graticules finas, pocas rutas y fondo transparente; no emplea texturas realistas ni fronteras políticas.
-- En móvil, el orden se vuelve vertical: metadata, headline, descripción, globo, capacidades y mindset. Se permite el recorte lateral del planeta, pero nunca scroll horizontal.
+- La introducción `SECURITY AT THE CORE.` expresa el enfoque del documento About en inglés. En escritorio comparte alineación con el globo y deja que `What we do` empiece en el mismo recorrido visual.
+- `WE SECURE. / WE ENGINEER. / WE POSITION.` son los títulos de las tres capacidades oficiales. Sus diagramas comparten proporción y trazo, con una señal roja puntual. Las tres columnas se separan por hairlines, sin tarjetas cerradas.
+- Cada descripción y lista de servicios es visible sin interacciones. Una introducción editorial separa el contexto de las capacidades; en móvil las columnas pasan a ser bloques con separadores horizontales.
+- Una franja delgada con borde perimetral redondeado separa Servicios y Experiencia. El candado plano usa cuerpo ámbar y arco plateado sobre un campo ASCII quieto. Solo cambian algunos caracteres del candado en reposo; todo el panel responde al clic, toque o teclado con una onda breve. Sin movimiento se muestra la ilustración plana.
+- Experiencia alinea el texto con una cuadrícula compacta de cuatro cifras, a la derecha en escritorio y debajo en móvil. En la portada, la traza del cierre `Always one step ahead` ocupa el espacio hacia Contact; en `/about` permanece al lado del texto.
+- En móvil, el texto va primero, el globo se compacta y las cartas se apilan. El contenido de lectura no se superpone al globo.
 - La terminal se integra directamente en el canvas oscuro, sin ventana, panel o borde exterior.
 - En la portada, About continúa debajo del Hero como parte del mismo documento; no requiere un cambio de ruta para descubrirse mediante scroll.
-- El header, la terminal y el indicador `Scroll down` del Hero se mantienen como una capa global estable sobre todas las secciones y conservan exactamente su posición.
-- La transición desde el Hero preserva la jerarquía: primero salen los elementos editoriales, luego el globo se aproxima y finalmente emerge el mensaje `ALWAYS ONE STEP AHEAD`.
-- Home y About comparten un único globo durante el recorrido de la portada. El contenido de ambas secciones debe solaparse mediante crossfade para evitar cortes perceptibles.
-- El área circular del mensaje debe ser amplia y predominantemente negra, con un borde difuso extendido que se funda con Void Black.
-- El área circular se alinea con el centro visual del globo y aparece gradualmente antes que el texto del mensaje.
+- El header se mantiene fijo sobre una superficie oscura. El indicador y la terminal dejan libre el área de lectura de About y no cubren Contact ni el footer.
+- Home y About comparten un único globo en la portada. Los textos de About no se animan con el scroll; la página no fija el scroll a posiciones de sección.
+
+### Contact y footer
+
+Contact comparte el ancho editorial de About, con el formulario a la izquierda
+y una zona visual completa a la derecha (debajo en móvil). La portada reutiliza
+el globo; `/contact` usa una órbita SVG estática. El formulario prepara un borrador
+de correo sin enviar mensajes desde el sitio. Instagram es el único canal en el footer, que conserva
+copyright y crédito. La navegación usa una marca oblicua roja, no un subrayado
+de ancho completo, y las llamadas a la acción usan un chevrón discreto.
 
 ### 8.4 Encabezado de sección
 

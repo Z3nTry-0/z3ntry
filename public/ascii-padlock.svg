@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="436" height="500" viewBox="0 0 436 500" role="img" aria-labelledby="title">
+  <title id="title">Candado amarillo y naranja de esquinas moderadamente redondeadas</title>
+  <defs>
+    <linearGradient id="arco" x1="218" y1="0" x2="218" y2="234" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D0D4D6"/>
+      <stop offset="1" stop-color="#AEB7BD"/>
+    </linearGradient>
+    <linearGradient id="cuerpo" x1="0" y1="234" x2="392" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFC43D"/>
+      <stop offset="1" stop-color="#F8AD24"/>
+    </linearGradient>
+    <linearGradient id="sombra" x1="0" y1="234" x2="436" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFB536"/>
+      <stop offset="1" stop-color="#FF9828"/>
+    </linearGradient>
+    <clipPath id="silueta" clipPathUnits="userSpaceOnUse">
+      <path clip-rule="evenodd" fill-rule="evenodd" d="M62 234H374A62 62 0 0 1 436 296V438A62 62 0 0 1 374 500H62A62 62 0 0 1 0 438V296A62 62 0 0 1 62 234Z M200 383.176915V437H236V383.176915A36 36 0 1 0 200 383.176915Z"/>
+    </clipPath>
+  </defs>
+  <path fill="url(#arco)" d="M60 282V158A158 158 0 0 1 376 158V282H314V158A96 96 0 0 0 122 158V282Z"/>
+  <g clip-path="url(#silueta)">
+    <rect x="0" y="234" width="436" height="266" fill="url(#cuerpo)"/>
+    <path fill="url(#sombra)" d="M416 234C323 377 171 457 0 500H436V234Z"/>
+  </g>
+</svg>

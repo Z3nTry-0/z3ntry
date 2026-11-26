@@ -9,6 +9,9 @@ import {
   aboutGlobeOrigin as bogota,
   type AboutGlobePoint as GlobePoint
 } from "../data/globe";
+import { startGlobeLifecycle } from "../../../lib/three/globe-lifecycle";
+import { createGlobeRoutes } from "../../../lib/three/globe-routes";
+import { compactRouteLimit, desktopRouteLimit } from "../../../lib/three/route-phase";
 
 interface BoundaryGeometry {
   type: "MultiLineString";
@@ -21,12 +24,6 @@ interface AtlasTopology extends Topology {
 
 interface GlobeNode extends GlobePoint {
   isOrigin: boolean;
-}
-
-interface Route extends GlobePoint {
-  endLat: number;
-  endLng: number;
-  offset: number;
 }
 
 function createCoastlines(globe: ThreeGlobe, coastline: BoundaryGeometry): THREE.LineSegments {
@@ -75,15 +72,9 @@ function createCoastlines(globe: ThreeGlobe, coastline: BoundaryGeometry): THREE
 
 export function setupAboutGlobe(container: HTMLElement): () => void {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const compact = window.matchMedia("(max-width: 47.99rem)").matches;
+  const compact = window.matchMedia("(max-width: 47.99rem), (pointer: coarse)").matches;
   const atlas = countriesAtlas as unknown as AtlasTopology;
   const coastline = mesh(atlas, atlas.objects.land) as BoundaryGeometry;
-  const routes: Route[] = destinations.map((destination, index) => ({
-    ...bogota,
-    endLat: destination.lat,
-    endLng: destination.lng,
-    offset: index / destinations.length
-  }));
   const nodes: GlobeNode[] = [
     { ...bogota, isOrigin: true },
     ...destinations.map((destination) => ({ ...destination, isOrigin: false }))
@@ -91,34 +82,21 @@ export function setupAboutGlobe(container: HTMLElement): () => void {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !compact });
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.domElement.setAttribute("aria-hidden", "true");
   container.append(renderer.domElement);
 
-  const globe = new ThreeGlobe()
+  const globe = new ThreeGlobe({ animateIn: false })
     .showAtmosphere(false)
     .showGraticules(true)
-    .arcsData(routes)
-    .arcStartLat("lat")
-    .arcStartLng("lng")
-    .arcEndLat("endLat")
-    .arcEndLng("endLng")
-    .arcColor(() => "rgba(225, 6, 0, 0.46)")
-    .arcStroke(0.13)
-    .arcAltitudeAutoScale(0.32)
-    .arcDashLength(0.14)
-    .arcDashGap(0.72)
-    .arcDashInitialGap("offset")
-    .arcDashAnimateTime(reducedMotion ? 0 : 5200)
-    .arcsTransitionDuration(0)
     .pointsData(nodes)
     .pointLat("lat")
     .pointLng("lng")
     .pointColor((point) => (point as GlobeNode).isOrigin ? "#e10600" : "rgba(242, 242, 242, 0.58)")
     .pointAltitude((point) => (point as GlobeNode).isOrigin ? 0.025 : 0.012)
     .pointRadius((point) => (point as GlobeNode).isOrigin ? 0.72 : 0.25)
+    .pointsTransitionDuration(0)
     .ringsData([bogota])
     .ringLat("lat")
     .ringLng("lng")
@@ -140,6 +118,9 @@ export function setupAboutGlobe(container: HTMLElement): () => void {
   }
 
   globe.add(createCoastlines(globe, coastline));
+  const advanceRoutes = createGlobeRoutes(
+    globe, bogota, destinations, compact ? compactRouteLimit : desktopRouteLimit, !reducedMotion, 0.56
+  );
   scene.add(globe);
 
   const cameraPosition = globe.getCoords(bogota.lat, bogota.lng, compact ? 2.85 : 2.55);
@@ -148,7 +129,7 @@ export function setupAboutGlobe(container: HTMLElement): () => void {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enablePan = false;
   controls.enableZoom = false;
-  controls.enableDamping = true;
+  controls.enableDamping = !reducedMotion;
   controls.dampingFactor = 0.045;
   controls.rotateSpeed = 0.34;
   controls.minPolarAngle = 0.45;
@@ -157,86 +138,34 @@ export function setupAboutGlobe(container: HTMLElement): () => void {
   controls.autoRotateSpeed = -0.22;
   controls.update();
 
-  let frameId = 0;
-  let resumeTimer = 0;
-  let visible = true;
-  let pageVisible = !document.hidden;
-  let disposed = false;
-
-  function render(): void {
-    if (disposed || !visible || !pageVisible || frameId !== 0) return;
-    const loop = (): void => {
-      if (disposed || !visible || !pageVisible) {
-        frameId = 0;
-        return;
-      }
-      controls.update();
-      renderer.render(scene, camera);
-      frameId = window.requestAnimationFrame(loop);
-    };
-    loop();
-  }
-
-  const resizeObserver = new ResizeObserver(([entry]) => {
-    if (!entry) return;
-    const { width, height } = entry.contentRect;
-    if (width <= 0 || height <= 0) return;
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height, false);
-  });
-  const intersectionObserver = new IntersectionObserver(([entry]) => {
-    visible = entry?.isIntersecting ?? false;
-    if (visible) render();
-  }, { threshold: 0.03 });
+  let resumeDelay = 0;
 
   function pauseAutoRotate(): void {
-    window.clearTimeout(resumeTimer);
+    resumeDelay = 0;
     controls.autoRotate = false;
   }
 
   function resumeAutoRotate(): void {
-    if (reducedMotion) return;
-    window.clearTimeout(resumeTimer);
-    resumeTimer = window.setTimeout(() => {
-      controls.autoRotate = true;
-    }, 2800);
+    if (!reducedMotion) resumeDelay = 2800;
   }
 
-  function handleVisibility(): void {
-    pageVisible = !document.hidden;
-    if (pageVisible) render();
-  }
-
-  resizeObserver.observe(container);
-  intersectionObserver.observe(container);
-  document.addEventListener("visibilitychange", handleVisibility);
-  renderer.domElement.addEventListener("pointerdown", pauseAutoRotate);
-  renderer.domElement.addEventListener("pointerup", resumeAutoRotate);
-  renderer.domElement.addEventListener("pointercancel", resumeAutoRotate);
-  container.classList.add("is-ready");
-  render();
+  controls.addEventListener("start", pauseAutoRotate);
+  controls.addEventListener("end", resumeAutoRotate);
+  const stop = startGlobeLifecycle({
+    container, globe, renderer, camera, scene, controls,
+    animated: !reducedMotion,
+    compact,
+    beforeFrame: (elapsed) => {
+      advanceRoutes(elapsed);
+      if (resumeDelay <= 0) return;
+      resumeDelay = Math.max(0, resumeDelay - elapsed);
+      if (resumeDelay === 0) controls.autoRotate = true;
+    }
+  });
 
   return () => {
-    disposed = true;
-    window.cancelAnimationFrame(frameId);
-    window.clearTimeout(resumeTimer);
-    resizeObserver.disconnect();
-    intersectionObserver.disconnect();
-    document.removeEventListener("visibilitychange", handleVisibility);
-    renderer.domElement.removeEventListener("pointerdown", pauseAutoRotate);
-    renderer.domElement.removeEventListener("pointerup", resumeAutoRotate);
-    renderer.domElement.removeEventListener("pointercancel", resumeAutoRotate);
-    controls.dispose();
-    globe.traverse((object) => {
-      if (object instanceof THREE.Mesh || object instanceof THREE.Line) {
-        object.geometry.dispose();
-        const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach((material) => material.dispose());
-      }
-    });
-    renderer.dispose();
-    renderer.domElement.remove();
-    container.classList.remove("is-ready");
+    controls.removeEventListener("start", pauseAutoRotate);
+    controls.removeEventListener("end", resumeAutoRotate);
+    stop();
   };
 }

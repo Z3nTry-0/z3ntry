@@ -2,7 +2,7 @@
 ---
 
 <section class="hero" id="home" data-hero aria-labelledby="hero-title">
-  <div class="hero__signal" aria-hidden="true" data-hero-signal data-hero-transition></div>
+  <div class="hero__signal" aria-hidden="true" data-hero-signal></div>
 
   <div class="hero__identity" data-hero-transition>
     <h1 id="hero-title" data-hero-logo>
@@ -16,17 +16,17 @@
     </p>
   </div>
 
-  <aside class="hero__note hero__note--top" aria-label="Visión" data-hero-item data-hero-transition>
+  <aside class="hero__note hero__note--top" aria-label="Visión">
     <p>A safer<br />tomorrow</p>
     <span class="note-line" aria-hidden="true"></span>
   </aside>
 
-  <aside class="hero__note hero__note--bottom" aria-label="Alcance" data-hero-item data-hero-transition>
+  <aside class="hero__note hero__note--bottom" aria-label="Alcance">
     <p>Ideas<br />defense<br />growth<br />globally</p>
     <span class="note-line" aria-hidden="true"></span>
   </aside>
 
-  <div class="hero__coordinates" aria-hidden="true" data-hero-item data-hero-transition>
+  <div class="hero__coordinates" aria-hidden="true">
     <span>04.7110° N</span>
     <span>074.0721° W</span>
   </div>
@@ -116,6 +116,22 @@
     filter: contrast(1.08);
     pointer-events: none;
     -webkit-user-drag: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    h1 img {
+      animation: hero-logo-float 4.8s ease-in-out infinite;
+    }
+  }
+
+  @keyframes hero-logo-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-0.4rem);
+    }
   }
 
   .hero__descriptor {

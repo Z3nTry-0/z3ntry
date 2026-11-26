@@ -1,6 +1,7 @@
 import { navigate } from "astro:transitions/client";
 
 import { companyCapabilities } from "../../data/companyCapabilities";
+import { observeAboutBoundary } from "../../lib/dom/observe-about-boundary";
 
 type TerminalContext = "home" | "about";
 type OutputTone = "default" | "muted" | "error";
@@ -258,7 +259,7 @@ export function setupGlobalTerminal(root: HTMLElement): () => void {
   let context: TerminalContext = window.location.pathname.startsWith("/about") ? "about" : "home";
   let historyIndex = state.commandHistory.length;
   let entryId = state.entries.reduce((maximum, entry) => Math.max(maximum, entry.id), 0) + 1;
-  let contextObserver: IntersectionObserver | undefined;
+  let stopObservingContext: (() => void) | undefined;
 
   const updatePrompt = (): void => {
     const path = context === "about" ? "~/about" : "~";
@@ -403,15 +404,9 @@ export function setupGlobalTerminal(root: HTMLElement): () => void {
   panel.addEventListener("keydown", handlePanelKeydown);
 
   if (hero && about && window.location.pathname === "/") {
-    contextObserver = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible?.target === about) setContext("about");
-      else if (visible?.target === hero) setContext("home");
-    }, { threshold: [0.35, 0.65] });
-    contextObserver.observe(hero);
-    contextObserver.observe(about);
+    stopObservingContext = observeAboutBoundary(about, (section) => {
+      setContext(section === "home" ? "home" : "about");
+    });
   }
 
   updatePrompt();
@@ -423,6 +418,6 @@ export function setupGlobalTerminal(root: HTMLElement): () => void {
     form.removeEventListener("submit", handleSubmit);
     input.removeEventListener("keydown", handleInputKeydown);
     panel.removeEventListener("keydown", handlePanelKeydown);
-    contextObserver?.disconnect();
+    stopObservingContext?.();
   };
 }

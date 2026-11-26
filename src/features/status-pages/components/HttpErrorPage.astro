@@ -1,0 +1,13 @@
+---
+import StatusLayout from "../../../layouts/StatusLayout.astro";
+import { httpErrors } from "../data/http-errors";
+
+interface Props {
+  status: keyof typeof httpErrors;
+}
+
+const { status } = Astro.props;
+const { title, description } = httpErrors[status];
+---
+
+<StatusLayout title={title} description={description} status={status} />

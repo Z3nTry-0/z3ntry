@@ -1,6 +1,8 @@
 ---
 import AboutCapabilities from "./AboutCapabilities.astro";
 import AboutGlobe from "./AboutGlobe.astro";
+import AsciiLock from "./AsciiLock.astro";
+import { experienceFacts } from "../data/capabilities";
 
 interface Props {
   scrollDriven?: boolean;
@@ -8,515 +10,377 @@ interface Props {
 }
 
 const { scrollDriven = false, showGlobe = true } = Astro.props;
+const Heading = scrollDriven ? "h2" : "h1";
+const Subheading = scrollDriven ? "h3" : "h2";
+const CapabilityHeading = scrollDriven ? "h4" : "h3";
+const contactHref = scrollDriven ? "#contact" : "/contact#contact";
 ---
 
 <section
-  class="about"
+  class:list={["about", { "about--embedded": scrollDriven }]}
   id="about"
   data-about
   data-about-scroll={scrollDriven ? "true" : "false"}
   aria-labelledby="about-title"
+  lang="en"
 >
+  <div class="about__opening">
+    <div class="about__frame about__intro">
+      <div class="about__intro-copy">
+        <Heading class="about__headline" id="about-title">Security at the core<span>.</span></Heading>
+        <p>Z3nTry is a technology company with cybersecurity at its core. We test defenses, build secure software, and give brands a clear digital presence.</p>
+        <p>We start with what you need to protect, how your team works, and what you want to achieve. Then we decide what to secure, build, or improve first.</p>
+      </div>
 
-  <div class="about__rail" aria-hidden="true" data-about-technical>
-    <span>Mindset</span><span>Build</span><span>Protect</span><span>Create</span><span>Scale</span><i></i>
-  </div>
-
-  <p class="about__direction" data-about-meta>
-    Different challenges.<br />Same direction.<br />A more secure, functional and relevant tomorrow.
-  </p>
-
-  <h1 class="about__headline" id="about-title" data-about-headline>
-    <span>We secure<em>.</em></span>
-    <span>We engineer<em>.</em></span>
-    <span>We position<em>.</em></span>
-  </h1>
-
-  <div class="about__copy" data-about-copy lang="en">
-    <p>
-      Z3nTry is a technology company with cybersecurity at its core, complemented by development
-      and digital design capabilities.
-    </p>
-    <p>
-      We work across the digital ecosystem to make it more secure, functional and relevant—building
-      solutions tailored to each challenge rather than generic responses.
-    </p>
-  </div>
-
-  <div class="about__capabilities">
-    <AboutCapabilities />
-  </div>
-
-  <section class="about__mindset" aria-labelledby="mindset-title" data-about-footer lang="en">
-    <p>Our mindset</p>
-    <h2 id="mindset-title">Don't just react. <strong>Anticipate.</strong><br />Always one step ahead.</h2>
-  </section>
-
-  {showGlobe && (
-    <div class="about__globe" data-about-globe-wrap>
-      <AboutGlobe />
+      {showGlobe ? (
+        <div class="about__globe" data-about-globe-wrap>
+          <AboutGlobe />
+        </div>
+      ) : <div class="about__globe about__globe-window" data-globe-about-slot aria-hidden="true"></div>}
     </div>
-  )}
-
-  <div class="about__globe-message" data-about-message aria-hidden="true">
-    <i class="about__message-backdrop" data-about-message-backdrop></i>
-    <span data-about-message-copy>Always one</span>
-    <strong data-about-message-copy>Step ahead.</strong>
   </div>
 
-  <div class="about__coordinates" data-about-technical aria-hidden="true">
-    <i></i><span>04.7110° N<br />074.0721° W</span>
+  <div class="about__details" data-about-reading>
+    <div class="about__frame">
+      <section id="services" aria-labelledby="capabilities-title">
+        <div class="about__capability-lead" id="capabilities">
+          <Subheading id="capabilities-title">What we do<span>.</span></Subheading>
+          <p>Finding a weakness is only the beginning. We help you address what puts your organization at risk, build the tools your team needs, and make your work easier for the right people to find.</p>
+        </div>
+        <AboutCapabilities heading={CapabilityHeading} />
+      </section>
+
+      <AsciiLock />
+
+      <div class="about__record">
+        <section class="about__experience" id="experience" aria-labelledby="experience-title">
+          <div>
+            <Subheading id="experience-title">What experience teaches us</Subheading>
+            <p>Working across countries has shown us how differently organizations face similar challenges. A method that works for one team needs to adapt to the systems, people, and risks of the next.</p>
+            <p>What we learn in each project shapes how we test defenses, build software, and develop brands for the next one.</p>
+          </div>
+          <dl class="about__facts">
+            {experienceFacts.map(({ value, label }) => (
+              <div><dt>{label}</dt><dd>{value}</dd></div>
+            ))}
+          </dl>
+        </section>
+
+        <section class="about__note" aria-labelledby="mindset-title">
+          <div>
+            <Subheading id="mindset-title">Always one step ahead<span>.</span></Subheading>
+            <p>Threats change. We think like attackers and prepare defenders before an incident forces them to react. The goal is to leave your team better prepared for what comes next.</p>
+            <a class="signal-link" href={contactHref}>Talk about your project</a>
+          </div>
+          {!scrollDriven && <svg class="about__signal" viewBox="0 0 256 76" fill="none" aria-hidden="true">
+            <path class="about__signal-track" d="M12 57h61l38-38h71l35 35h27" />
+            <path class="about__signal-route" pathLength="100" d="M12 57h61l38-38h71l35 35h27" />
+            <circle cx="12" cy="57" r="2.5" />
+            <circle cx="244" cy="54" r="2.5" />
+          </svg>}
+        </section>
+        {scrollDriven && (
+          <svg class="about__signal about__signal--handoff" viewBox="0 0 640 36" fill="none" aria-hidden="true">
+            <path class="about__signal-track" d="M4 7H305L327 29H636" />
+            <path class="about__signal-route" pathLength="100" d="M4 7H305L327 29H636" />
+            <circle cx="4" cy="7" r="2" />
+            <circle cx="636" cy="29" r="2" />
+          </svg>
+        )}
+      </div>
+    </div>
   </div>
-
-  <aside class="about__system" data-about-technical aria-hidden="true">
-    <div class="about__system-grid"></div>
-    <p class="about__system-top">Technology<br />People<br />A safer tomorrow</p>
-    <p class="about__system-bottom">Ideas<br />Defense<br />Growth<br />Globally</p>
-    <span class="cross cross--one">+</span>
-    <span class="cross cross--two">+</span>
-  </aside>
-
 </section>
 
 <script>
   import { setupAboutAnimation } from "../animations/about.gsap";
+  import { mountVisibleScene } from "../../../lib/three/mount-visible-scene";
 
   let cleanupPage = (): void => undefined;
+  let currentAbout: HTMLElement | null = null;
 
   function initializeAbout(): void {
-    cleanupPage();
     const root = document.querySelector<HTMLElement>("[data-about]");
-    const globe = root?.querySelector<HTMLElement>("[data-about-globe]");
+    if (root === currentAbout) return;
+    cleanupPage();
     if (!root) return;
+    currentAbout = root;
 
-    const cleanupAnimation = root.dataset.aboutScroll === "true"
-      ? () => undefined
-      : setupAboutAnimation(root);
-    let cleanupGlobe = (): void => undefined;
-    let disposed = false;
-
-    const globeLoadTimer = globe
-      ? window.setTimeout(() => {
-          void import("../animations/about-globe.client")
-            .then(({ setupAboutGlobe }) => {
-              if (!disposed) cleanupGlobe = setupAboutGlobe(globe);
-            })
-            .catch(() => {
-              // The CSS fallback remains visible if WebGL initialization fails.
-            });
-        }, 120)
+    const globe = root.querySelector<HTMLElement>("[data-about-globe]");
+    const lock = root.querySelector<HTMLElement>("[data-ascii-lock]");
+    const reading = root.querySelector<HTMLElement>("[data-about-reading]");
+    const utilities = document.querySelector<HTMLElement>("[data-shell-utilities]");
+    const readingObserver = reading && utilities && "IntersectionObserver" in window
+      ? new IntersectionObserver(([entry]) => {
+          utilities.toggleAttribute("data-about-reading-active", entry.isIntersecting);
+        })
       : undefined;
+    if (reading) readingObserver?.observe(reading);
+    const cleanupAnimation = root.dataset.aboutScroll === "true"
+      ? undefined
+      : setupAboutAnimation(root);
+    const cleanupGlobe = globe
+      ? mountVisibleScene(globe, () => import("../animations/about-globe.client").then(({ setupAboutGlobe }) => setupAboutGlobe))
+      : undefined;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let cleanupLock: (() => void) | undefined;
+    const syncLock = (): void => {
+      cleanupLock?.();
+      cleanupLock = lock && !motion.matches
+        ? mountVisibleScene(lock, () => import("../animations/ascii-lock.client").then(({ setupAsciiLock }) => setupAsciiLock))
+        : undefined;
+    };
+    syncLock();
+    motion.addEventListener("change", syncLock);
 
     cleanupPage = () => {
-      disposed = true;
-      if (globeLoadTimer !== undefined) window.clearTimeout(globeLoadTimer);
-      cleanupAnimation();
-      cleanupGlobe();
+      currentAbout = null;
+      readingObserver?.disconnect();
+      utilities?.removeAttribute("data-about-reading-active");
+      cleanupAnimation?.();
+      cleanupGlobe?.();
+      motion.removeEventListener("change", syncLock);
+      cleanupLock?.();
     };
   }
 
   initializeAbout();
   document.addEventListener("astro:page-load", initializeAbout);
   document.addEventListener("astro:before-swap", () => cleanupPage());
-  window.addEventListener("pagehide", () => cleanupPage(), { once: true });
+  window.addEventListener("pagehide", () => cleanupPage());
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) initializeAbout();
+  });
 </script>
 
 <style>
   .about {
     position: relative;
-    isolation: isolate;
-    min-height: max(100svh, 55rem);
-    overflow: hidden;
     background: var(--color-void);
   }
 
-  .about__direction,
-  .about__rail,
-  .about__headline,
-  .about__copy,
-  .about__capabilities,
-  .about__mindset {
-    position: absolute;
-    z-index: 4;
+  :global([data-shell-utilities][data-about-reading-active]:not(:focus-within)) {
+    display: none;
   }
 
-  .about__direction {
-    top: 14.5%;
-    left: 30%;
-    color: rgb(242 242 242 / 38%);
-    font-family: var(--font-mono);
-    font-size: clamp(0.54rem, 0.58vw, 0.64rem);
-    letter-spacing: 0.11em;
-    line-height: 1.65;
-    text-transform: uppercase;
+  .about__frame {
+    inline-size: var(--page-frame);
+    margin-inline: auto;
+  }
+
+  .about__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1rem, 4vw, 4rem);
+    padding-block: clamp(6rem, 9vw, 8rem) clamp(2rem, 5vw, 4rem);
+  }
+
+  .about--embedded .about__opening {
+    background: linear-gradient(90deg, var(--color-void) 30%, transparent 56%);
+  }
+
+  .about__intro-copy {
+    pointer-events: auto;
   }
 
   .about__headline {
-    top: 25%;
-    left: 11.5%;
-    display: grid;
-    color: var(--color-ash);
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 5vw, 6rem);
-    font-weight: 700;
-    letter-spacing: -0.045em;
-    line-height: 0.88;
+    max-inline-size: 13ch;
+    font: 700 clamp(2.35rem, 5.6vw, 5.4rem)/0.99 var(--font-display);
+    letter-spacing: -0.04em;
     text-transform: uppercase;
+    text-wrap: balance;
   }
 
-  .about__headline span {
-    display: block;
-  }
-
-  .about__headline em {
+  .about__headline span,
+  #capabilities-title span,
+  .about__note h3 span,
+  .about__note h2 span {
     color: var(--color-signal);
-    font-style: normal;
   }
 
-  .about__rail {
-    top: 14.5%;
-    left: var(--page-gutter);
-    display: grid;
-    gap: 0.38rem;
-    color: rgb(242 242 242 / 34%);
-    font-family: var(--font-mono);
-    font-size: clamp(0.5rem, 0.53vw, 0.58rem);
-    letter-spacing: 0.12em;
-    line-height: 1.45;
-    text-transform: uppercase;
-  }
-
-  .about__rail span:first-child {
-    margin-bottom: 0.35rem;
-    color: rgb(242 242 242 / 54%);
-  }
-
-  .about__rail i {
-    width: 2.4rem;
-    height: 1px;
-    margin-top: 0.4rem;
-    background: rgb(242 242 242 / 14%);
-  }
-
-  .about__copy {
-    top: 55%;
-    left: 11.5%;
-    width: min(24vw, 27rem);
-    color: rgb(242 242 242 / 62%);
-    font-family: var(--font-mono);
-    font-size: clamp(0.7rem, 0.72vw, 0.8rem);
-    letter-spacing: 0.025em;
-    line-height: 1.7;
-  }
-
-  .about__copy p + p {
-    margin-top: 0.8rem;
-  }
-
-  .about__capabilities {
-    top: 54%;
-    left: 36.5%;
-    width: min(19vw, 20rem);
-  }
-
-  .about__mindset {
-    bottom: 8.5%;
-    left: 11.5%;
-    color: rgb(242 242 242 / 48%);
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-  }
-
-  .about__mindset > p {
-    margin-bottom: 0.5rem;
-    font-size: 0.54rem;
-    letter-spacing: 0.18em;
-  }
-
-  .about__mindset h2 {
-    color: rgb(242 242 242 / 78%);
-    font-family: var(--font-mono);
-    font-size: clamp(0.72rem, 0.82vw, 0.92rem);
-    font-weight: 400;
-    letter-spacing: 0.09em;
-    line-height: 1.55;
-  }
-
-  .about__mindset strong {
-    color: var(--color-signal);
-    font-weight: 400;
+  .about__intro-copy p {
+    max-inline-size: 50ch;
+    margin-block-start: 1rem;
+    color: var(--color-muted);
+    font-size: clamp(1rem, 1.45vw, 1.2rem);
+    line-height: 1.5;
   }
 
   .about__globe {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    right: -19vw;
-    width: min(83vw, 82rem);
+    inline-size: min(100%, 27rem);
     aspect-ratio: 1;
-    opacity: 0.86;
-    transform: translateY(-50%);
+    justify-self: center;
   }
 
-  .about__globe-message {
-    position: absolute;
-    z-index: 5;
-    top: 49%;
-    right: auto;
-    left: 75.5%;
-    display: grid;
-    min-width: clamp(16rem, 23vw, 25rem);
-    padding: clamp(3.5rem, 5vw, 6rem);
-    isolation: isolate;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-  }
-
-  .about__message-backdrop {
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    left: 50%;
-    width: clamp(24rem, 38vw, 44rem);
-    aspect-ratio: 1;
+  .about__globe-window {
+    border: 1px solid var(--color-hairline);
     border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgb(5 5 5 / 100%) 0 38%,
-      rgb(5 5 5 / 94%) 51%,
-      rgb(5 5 5 / 72%) 64%,
-      rgb(5 5 5 / 34%) 76%,
-      transparent 88%
-    );
-    transform: translate(-50%, -50%);
+    inline-size: min(100%, 27rem);
   }
 
-  .about__globe-message span {
-    color: rgb(242 242 242 / 62%);
-    font-size: clamp(1.05rem, 1.7vw, 1.8rem);
-    font-weight: 300;
-    letter-spacing: 0.12em;
+  :global([data-globe-following]) .about__globe-window {
+    border-color: transparent;
   }
 
-  .about__globe-message strong {
-    color: var(--color-signal);
-    font-size: clamp(1.55rem, 2.65vw, 2.85rem);
-    font-weight: 400;
-    letter-spacing: 0.04em;
+  .about__details {
+    padding-block: clamp(2.5rem, 6vw, 5.5rem) clamp(4rem, 8vw, 7rem);
+    background: var(--color-void);
+    pointer-events: auto;
   }
 
-  .about__coordinates {
-    position: absolute;
-    z-index: 5;
-    top: 56%;
-    right: 15%;
+  .about--embedded .about__details {
+    padding-block-end: clamp(1rem, 2.5vw, 2.5rem);
+  }
+
+  #services,
+  #capabilities,
+  #experience {
+    scroll-margin-block-start: 6rem;
+  }
+
+  .about__capability-lead {
+    margin-block-end: clamp(2.75rem, 8vw, 7rem);
+  }
+
+  #capabilities-title {
+    margin-block-end: 0.65rem;
+    font: 700 clamp(2rem, 5vw, 4.25rem)/1.05 var(--font-body);
+    letter-spacing: -0.04em;
+  }
+
+  .about__capability-lead p {
+    max-inline-size: 50ch;
+    color: var(--color-muted);
+    font-size: clamp(1.15rem, 2.35vw, 2rem);
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    text-wrap: pretty;
+  }
+
+  .about__details :is(h2, h3):where(#experience-title, #mindset-title) {
+    margin-block: 0 1rem;
+    font: 700 clamp(1.65rem, 3.6vw, 3.4rem)/1.08 var(--font-body);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .about__experience {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .about__record p {
+    max-inline-size: 58ch;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .about__experience p + p { margin-block-start: 0.85rem; }
+
+  .about__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.85rem, 2vw, 1.5rem);
+    margin: 0;
+  }
+
+  .about__facts div {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    color: rgb(242 242 242 / 28%);
-    font-family: var(--font-mono);
-    font-size: 0.48rem;
-    letter-spacing: 0.12em;
-    line-height: 1.6;
-    pointer-events: none;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    padding-block: 0.9rem;
+    border-block-start: 1px solid var(--color-hairline);
   }
 
-  .about__coordinates i {
-    width: 2.5rem;
-    height: 1px;
-    margin-top: 0.32rem;
-    background: rgb(242 242 242 / 18%);
+  .about__facts dd {
+    margin: 0;
+    font: 700 clamp(1.65rem, 3vw, 2.4rem)/1 var(--font-display);
   }
 
-  .about__system {
-    position: absolute;
-    z-index: 2;
-    top: 12%;
-    right: 0;
-    bottom: 8%;
-    width: 18vw;
-    min-width: 12rem;
-    color: rgb(242 242 242 / 22%);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.17em;
-    line-height: 1.65;
-    text-transform: uppercase;
-    pointer-events: none;
+  .about__facts dt {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+    line-height: 1.35;
   }
 
-  .about__system-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgb(242 242 242 / 6%) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(242 242 242 / 6%) 1px, transparent 1px);
-    background-size: 4.25rem 4.25rem;
-    mask-image: linear-gradient(to left, black, transparent 92%);
+  .about__note {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.8fr);
+    align-items: center;
+    gap: clamp(1.25rem, 5vw, 4rem);
+    margin-block-start: clamp(3rem, 8vw, 7rem);
+    padding-block-start: clamp(2rem, 5vw, 4rem);
+    border-block-start: 1px solid var(--color-hairline);
   }
 
-  .about__system-top,
-  .about__system-bottom {
-    position: absolute;
-    right: var(--page-gutter);
-    text-align: right;
+  .about__note a {
+    margin-block-start: 0.75rem;
   }
 
-  .about__system-top {
-    top: 7%;
+  .about__signal {
+    justify-self: end;
+    inline-size: min(100%, 15rem);
+    color: var(--color-signal);
   }
 
-  .about__system-bottom {
-    bottom: 3%;
+  .about__signal-track { stroke: var(--color-hairline); }
+  .about__signal-route { stroke: currentColor; stroke-dasharray: 5 95; stroke-dashoffset: -53; }
+  .about__signal circle { fill: currentColor; }
+
+  .about__signal--handoff {
+    inline-size: min(76%, 40rem);
+    margin-block-start: clamp(1.25rem, 4vw, 3rem);
+    margin-inline-start: auto;
   }
 
-  .cross {
-    position: absolute;
-    color: rgb(225 6 0 / 36%);
-  }
+  .about__signal--handoff circle { opacity: 0.65; }
 
-  .cross--one {
-    top: 32%;
-    right: 33%;
-  }
-
-  .cross--two {
-    right: 72%;
-    bottom: 27%;
-  }
-
-  @media (max-width: 75rem) {
-    .about__headline {
-      left: 9%;
-      font-size: clamp(2.8rem, 5.2vw, 4.7rem);
-    }
-
-    .about__copy,
-    .about__mindset {
-      left: 9%;
-    }
-
-    .about__capabilities {
-      left: 33%;
-      width: 19vw;
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .about__signal-route {
+        animation-name: trace-route;
+        animation-duration: auto;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 47%;
+      }
     }
   }
 
-  @media (max-width: 63.99rem) {
-    .about {
-      min-height: max(100svh, 58rem);
+  @keyframes trace-route {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -95; }
+  }
+
+  @media (max-width: 42rem) {
+    .about__experience { grid-template-columns: minmax(0, 1fr); }
+    .about__note { grid-template-columns: minmax(0, 1fr); }
+    .about__signal { inline-size: 7.5rem; }
+    .about__signal--handoff { inline-size: min(82%, 20rem); }
+    .about__intro {
+      inline-size: 100%;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+      padding-block: 0 1rem;
     }
 
-    .about__direction {
-      left: 38%;
+    .about__intro-copy {
+      padding: 6.25rem var(--page-gutter) 0;
+      background: var(--color-void);
     }
 
-    .about__headline {
-      top: 27%;
-      left: var(--page-gutter);
-      font-size: clamp(2.65rem, 6vw, 4.1rem);
-    }
-
-    .about__copy,
-    .about__mindset {
-      left: var(--page-gutter);
-    }
-
-    .about__copy {
-      width: 29vw;
-    }
-
-    .about__capabilities {
-      left: 35%;
-      width: 24vw;
+    .about--embedded .about__opening {
+      background: none;
     }
 
     .about__globe {
-      right: -31vw;
-      width: 95vw;
-      opacity: 0.68;
+      inline-size: min(78%, 18rem);
     }
 
-    .about__globe-message {
-      left: 73%;
-    }
-
-    .about__coordinates,
-    .about__system {
-      display: none;
-    }
-  }
-
-  @media (max-width: 47.99rem) {
-    .about {
-      min-height: 100rem;
-      overflow: hidden;
-      padding: 0 var(--page-gutter);
-    }
-
-    .about__direction,
-    .about__rail,
-    .about__headline,
-    .about__copy,
-    .about__capabilities,
-    .about__mindset {
-      position: relative;
-      inset: auto;
-    }
-
-    .about__rail {
-      margin-top: 8.5rem;
-    }
-
-    .about__direction {
-      margin-top: 2rem;
-    }
-
-    .about__headline {
-      margin-top: 3.5rem;
-      font-size: clamp(2.3rem, 11.5vw, 4rem);
-      line-height: 0.94;
-    }
-
-    .about__copy {
-      width: min(100%, 28rem);
-      margin-top: 2.5rem;
-    }
-
-    .about__globe {
-      top: 44rem;
-      right: -47vw;
-      width: 130vw;
-      min-width: 35rem;
-      opacity: 0.62;
-      transform: none;
-    }
-
-    .about__globe-message {
-      top: 58rem;
-      right: auto;
-      left: 66%;
-      min-width: 16rem;
-      padding: 3rem;
-    }
-
-    .about__capabilities {
-      width: min(100%, 22rem);
-      margin-top: 34rem;
-    }
-
-    .about__mindset {
-      margin-top: 4rem;
-    }
-
-    .about__system,
-    .about__coordinates {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
   }
 </style>

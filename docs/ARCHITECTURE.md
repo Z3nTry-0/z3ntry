@@ -941,6 +941,26 @@ Core landing-page content must remain usable if:
 
 Interactive enhancement must not become a dependency for basic content access.
 
+`StatusLayout.astro` renders lightweight HTML without the landing shell.
+`/[section]` prerenders the legacy Services and Experience placeholders; the
+navigation targets the real sections on the landing page instead. Contact is
+shared by `/` and `/contact`. Its form composes a `mailto:` draft without a server
+endpoint. The footer owns the public Instagram link. The landing hides terminal
+and scroll utilities while Contact is visible; standalone Contact omits them.
+Astro renders `404.astro` for a missing page locally. On Vercel, `vercel.json`
+checks existing routes first, then redirects missing page-shaped requests to
+`/` with a temporary `307` when the browser sends `Sec-Fetch-Mode: navigate`
+and prefers `text/html`. Requests without navigation metadata, background
+fetches, static assets, and API paths are not redirected.
+The `400`, `429`, `500`, `502`, `503`, and `504` copy is available through
+`HttpErrorPage.astro` but is not wired to the static deployment. Do not publish
+those templates as successful `200` responses or assume they replace Vercel's
+infrastructure and firewall errors.
+
+Run `node --test tests/status-pages.test.mjs` against the local server. To verify
+deployment routing on an authorized Vercel Preview, set `TEST_SITE_URL` to the
+Preview URL and `TEST_VERCEL_ROUTING=1` before running the same check.
+
 ---
 
 ## 28. Technical definition of done

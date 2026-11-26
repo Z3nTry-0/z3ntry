@@ -1,6 +1,6 @@
 export interface CompanyCapability {
   index: string;
-  name: string;
+  name: "Cybersecurity" | "Development" | "Design";
   keywords: [string, string, string];
   description: string;
 }

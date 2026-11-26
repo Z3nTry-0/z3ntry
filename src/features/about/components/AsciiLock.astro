@@ -1,0 +1,41 @@
+<button class="ascii-lock" type="button" data-ascii-lock aria-label="Send a ripple through the ASCII artwork" disabled>
+  <img class="ascii-lock__still" src="/ascii-padlock.svg" width="440" height="500" alt="" loading="lazy" />
+  <span class="ascii-lock__output" data-ascii-output aria-hidden="true"></span>
+</button>
+
+<style>
+  .ascii-lock {
+    position: relative;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    inline-size: 100%;
+    block-size: clamp(9rem, 19vw, 15rem);
+    margin-block: clamp(2.75rem, 7vw, 6rem) clamp(2rem, 5vw, 4rem);
+    padding: 0;
+    border: 1px solid var(--color-hairline);
+    border-radius: 0.65rem;
+    background: var(--color-ascii-panel);
+  }
+
+  .ascii-lock__still {
+    inline-size: auto;
+    block-size: 70%;
+    pointer-events: none;
+  }
+  .ascii-lock__output {
+    position: absolute;
+    inset: clamp(0.45rem, 1.35vw, 1rem);
+    pointer-events: none;
+  }
+
+  .ascii-lock__output :global(canvas) { inline-size: 100%; block-size: 100%; }
+
+  .ascii-lock:enabled { cursor: crosshair; }
+  .ascii-lock:focus-visible { outline-offset: -0.3rem; }
+
+  .ascii-lock:not([data-ascii-ready]) .ascii-lock__output,
+  .ascii-lock[data-ascii-ready] .ascii-lock__still { visibility: hidden; }
+
+</style>

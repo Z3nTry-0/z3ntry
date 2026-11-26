@@ -8,7 +8,7 @@ Landing page estática de Z3nTry construida con Astro, TypeScript y CSS moderno.
 - Globo sobredimensionado, centrado verticalmente, desplazado y recortado de forma intencional por el borde derecho.
 - Vista inicial orientada a Bogotá con rotación horizontal mediante puntero o interacción táctil.
 - Costas y continentes representados sin fronteras políticas internas.
-- Entre 8 y 10 conexiones transitorias activas: cada ruta sale de Bogotá, llega una vez a su destino y es sustituida por otra selección aleatoria.
+- Hasta diez conexiones en escritorio y cuatro en móvil: cada línea se extiende desde Bogotá y permanece visible dos segundos mientras un punto la recorre, sin parpadeos.
 - Catálogo de 73 destinos con cobertura reforzada en Estados Unidos, México, Canadá, Europa y Latinoamérica.
 - Fallback visual y comportamiento adaptado para `prefers-reduced-motion`.
 
@@ -16,23 +16,30 @@ La visualización utiliza `three`, `three-globe`, `world-atlas` y `topojson-clie
 
 ## Página About
 
-La ruta `/about` presenta el perfil de Z3nTry mediante el headline `WE SECURE. WE ENGINEER. WE POSITION.`, las capacidades Cybersecurity, Development y Design, el mindset `ALWAYS ONE STEP AHEAD` y un globo tecnológico interactivo propio. El contenido se basa en los documentos oficiales disponibles en `docs/About Z3nTry — Español.md` y `docs/About Z3nTry — English.md`.
+La ruta `/about` y la sección de la portada presentan el enfoque de Z3nTry, tres capacidades con diagramas y listas de servicios visibles, cifras de experiencia y el cierre `ALWAYS ONE STEP AHEAD`. El contenido se basa en `docs/About Z3nTry — English.md`, `docs/Z3nTry Services — Landing Page.md` y `docs/Experience — Español.md`. La ruta independiente tiene su propio globo interactivo.
 
-La portada integra Home y About en un único recorrido vertical. El control global `Scroll down`, la rueda del mouse y los gestos táctiles recorren una transición GSAP/ScrollTrigger en la que ambos contenidos se cruzan mediante fade, mientras un único globo persistente se aproxima y About emerge desde el fondo. El recorrido usa scroll snap para asentarse en la posición exacta de cada sección. El header, la terminal y el control de scroll son elementos globales persistentes del layout. La ruta `/about` se conserva como acceso directo independiente.
+La portada integra Home y About en un recorrido vertical libre. En una visita nueva desde arriba (`/` o `/#home`), la portada espera 1,7 segundos antes de desplazarse suavemente hacia Services, si no hay interacción y el visitante no prefiere movimiento reducido. La rueda, los gestos táctiles y el control `Scroll down` siguen disponibles. El globo compartido se encuadra en About y Contact; el texto de About permanece visible sin animación.
+
+Services y Experience enlazan a `/#services` y `/#experience` desde el menú. Contact y el footer cierran la portada; `/contact` ofrece el mismo acceso directo por correo. Instagram (`@z3n_try`) es el único canal enlazado en el footer y se puede reemplazar con `PUBLIC_INSTAGRAM_HANDLE`.
+
+El formulario de Contact prepara un borrador mediante `mailto:contact@z3ntry.com` en el cliente de correo configurado. El sitio no envía mensajes ni requiere una API o credenciales de Resend.
 
 El `ClientRouter` nativo de Astro mantiene transiciones fluidas hacia rutas independientes, con limpieza de las instancias GSAP y WebGL durante cada cambio de página.
 
 ## Requisitos
 
-- Node.js 24 o superior.
+- Node.js 26.13.1 (fijado en `.nvmrc`).
 - npm 11 o superior.
 
 ## Desarrollo local
 
 ```bash
-npm install
+nvm use      # toma la versión de .nvmrc
+npm ci
 npm run dev
 ```
+
+El archivo `.nvmrc` fija la versión de Node del proyecto. Con `nvm` instalado y el auto-switch configurado en el shell, la versión correcta se activa automáticamente al entrar al directorio.
 
 Astro sirve el proyecto en `http://localhost:4321` por defecto.
 
