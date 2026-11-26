@@ -1,4 +1,6 @@
 ---
+import SeoHead from "../components/shell/SeoHead.astro";
+
 import "../styles/global.css";
 
 interface Props {
@@ -16,10 +18,7 @@ const { title, description, status, titleLang } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <meta name="robots" content="noindex" />
-    <link rel="icon" type="image/webp" href="/z3ntry.webp" />
-    <title>{title} | Z3nTry</title>
+    <SeoHead title={`${title} | Z3nTry`} description={description} noindex />
   </head>
   <body>
     <header class="status-header">

@@ -22,6 +22,8 @@ La portada integra Home y About en un recorrido vertical libre. En una visita nu
 
 Services y Experience enlazan a `/#services` y `/#experience` desde el menú. Contact y el footer cierran la portada; `/contact` ofrece el mismo acceso directo por correo. Instagram (`@z3n_try`) es el único canal enlazado en el footer y se puede reemplazar con `PUBLIC_INSTAGRAM_HANDLE`.
 
+Las URL canónicas, el sitemap y la tarjeta de vista previa (Open Graph) usan `https://z3ntry.com`. Si el dominio de producción cambia, define `SITE_URL` en el build y actualiza la línea `Sitemap:` de `public/robots.txt`.
+
 El formulario de Contact prepara un borrador mediante `mailto:contact@z3ntry.com` en el cliente de correo configurado. El sitio no envía mensajes ni requiere una API o credenciales de Resend.
 
 El `ClientRouter` nativo de Astro mantiene transiciones fluidas hacia rutas independientes, con limpieza de las instancias GSAP y WebGL durante cada cambio de página.

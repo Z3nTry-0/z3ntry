@@ -1,0 +1,137 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  noindex?: boolean;
+  image?: string;
+  imageAlt?: string;
+  sameAs?: string[];
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  noindex = false,
+  image = "/og-image.png",
+  imageAlt = "Z3nTry: Cybersecurity, Development and Design. Always one step ahead.",
+  sameAs = [],
+} = Astro.props;
+
+const site = Astro.site ?? new URL("https://z3ntry.com");
+const canonical = new URL(path, site).href;
+const imageUrl = new URL(image, site).href;
+const siteUrl = new URL("/", site).href;
+const robots = noindex
+  ? "noindex"
+  : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}#organization`,
+      name: "Z3nTry",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/icon-512.png", site).href,
+        width: 512,
+        height: 512,
+      },
+      image: imageUrl,
+      description:
+        "Compañía de tecnología enfocada en ciberseguridad, complementada por desarrollo de software y diseño digital.",
+      slogan: "Always one step ahead.",
+      email: "contact@z3ntry.com",
+      foundingLocation: { "@type": "Place", name: "Colombia" },
+      address: { "@type": "PostalAddress", addressCountry: "CO" },
+      areaServed: "Worldwide",
+      knowsAbout: [
+        "Ciberseguridad",
+        "Pentesting",
+        "Seguridad ofensiva",
+        "Seguridad defensiva",
+        "Desarrollo de software",
+        "Diseño digital",
+        "Branding",
+      ],
+      sameAs,
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        email: "contact@z3ntry.com",
+        availableLanguage: ["es", "en"],
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}#website`,
+      name: "Z3nTry",
+      url: siteUrl,
+      inLanguage: "es",
+      publisher: { "@id": `${siteUrl}#organization` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: "es",
+      isPartOf: { "@id": `${siteUrl}#website` },
+      about: { "@id": `${siteUrl}#organization` },
+      primaryImageOfPage: { "@type": "ImageObject", url: imageUrl, width: 1200, height: 630 },
+    },
+  ],
+};
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={robots} />
+<meta name="googlebot" content={robots} />
+<meta name="author" content="Z3nTry" />
+<meta name="application-name" content="Z3nTry" />
+<meta name="apple-mobile-web-app-title" content="Z3nTry" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#050505" />
+<meta name="color-scheme" content="dark" />
+{!noindex && <link rel="canonical" href={canonical} />}
+
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+<link rel="icon" type="image/webp" href="/z3ntry.webp" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Z3nTry" />
+<meta property="og:locale" content="es_CO" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:secure_url" content={imageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+{
+  !noindex && (
+    // eslint-disable-next-line astro/no-set-html-directive -- static JSON-LD built above; "<" is escaped.
+    <script type="application/ld+json" is:inline set:html={structuredDataJson} />
+  )
+}

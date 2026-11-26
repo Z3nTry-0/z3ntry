@@ -5,7 +5,9 @@ import { ClientRouter } from "astro:transitions";
 
 import GlobalTerminal from "../components/shell/GlobalTerminal.astro";
 import GlobalScrollControl from "../components/shell/GlobalScrollControl.astro";
+import SeoHead from "../components/shell/SeoHead.astro";
 import SiteHeader from "../components/shell/SiteHeader.astro";
+import { instagram } from "../features/contact/data/contact-links";
 
 import "../styles/global.css";
 
@@ -24,14 +26,8 @@ const { title, description, active = "home", scrollTarget = "/#about", showUtili
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
-    <meta name="theme-color" content="#050505" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <link rel="icon" type="image/webp" href="/z3ntry.webp" />
-    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <SeoHead title={title} description={description} sameAs={[instagram.href]} />
     <ClientRouter fallback="animate" />
   </head>
   <body>
